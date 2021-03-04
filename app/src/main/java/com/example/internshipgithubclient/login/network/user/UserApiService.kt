@@ -7,16 +7,21 @@ import retrofit2.http.Path
 
 const val USER_HEADER = "Accept: application/vnd.github.v3+json"
 
-interface UserServiceAPI {
+interface UserApiService {
+
+    //Returns currently authenticated user
     @Headers(USER_HEADER)
     @GET("/user")
     fun getAuthenticatedUser(): UserNetworkEntity
 
+    //Returns public info about specific user
     @Headers(USER_HEADER)
     @GET("/users/{username}")
-    fun getUser(@Path("username") username:String): UserNetworkEntity
+    fun getUser(@Path("username") username: String): UserNetworkEntity
 
+
+    //Lists the people following the authenticated user
     @Headers(USER_HEADER)
     @GET("/user/followers")
-    fun getAutheticatedUserFollowers():List<UserNetworkEntity>
+    fun getAutheticatedUserFollowers(): List<UserNetworkEntity>
 }
