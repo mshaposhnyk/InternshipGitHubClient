@@ -13,10 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InternshipGitHubClient">
         <activity
-            android:name=".UserWorkSpaceActivity"
+            android:name=".ui.workspace.UserWorkSpaceActivity"
             android:label="@string/title_activity_user_work_space"
-            android:theme="@style/Theme.InternshipGitHubClient.NoActionBar" />
-        <activity android:name=".ui.login.LoginActivity">
+            android:theme="@style/Theme.InternshipGitHubClient" />
+        <activity android:name=".ui.login.LoginActivity"
+                  android:theme="@style/Theme.InternshipGitHubClient.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

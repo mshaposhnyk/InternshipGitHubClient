@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.ui.workspace.UserWorkSpaceActivity
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 
@@ -17,10 +18,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Hide the toolbar
-        supportActionBar?.hide()
-
         setContentView(R.layout.activity_login)
 
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
@@ -33,7 +30,15 @@ class LoginActivity : AppCompatActivity() {
         }
         loginViewModel.eventTokenExchanged.observe(this, Observer<Boolean> {
             //We have an accessKey, now invoke restAPI call
-            loginViewModel.showCurrentUserInfo()
+            //loginViewModel.showCurrentUserInfo()
+            // Start activity
+            startActivity(Intent(this, UserWorkSpaceActivity::class.java))
+
+            // Animate the loading of new activity
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+
+            // Close this activity
+            finish()
         } )
         loginViewModel.userEntity.observe(this) {
             //Show toast with user info
