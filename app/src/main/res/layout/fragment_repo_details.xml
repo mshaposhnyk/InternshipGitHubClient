@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/issuesCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/issuesChoice"
+            app:layout_constraintBottom_toBottomOf="@id/issuesChoice"
+            app:layout_constraintEnd_toEndOf="@id/issuesChoice"
+            android:layout_marginEnd="@dimen/margin_large"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/issuesChoice"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="@dimen/list_one_line_w_icon_height"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/margin_large"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="@dimen/margin_large"
+            android:focusable="true"
+            android:gravity="center|start"
+            android:text="@string/issues"
+            app:drawableStartCompat="@drawable/ic_git_issues"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/firstDivider" />
+
+        <TextView
+            android:id="@+id/pullRequestChoice"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="@dimen/list_one_line_w_icon_height"
+            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/margin_large"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="@dimen/margin_large"
+            android:focusable="true"
+            android:gravity="center|start"
+            android:text="@string/pull_requests"
+            app:drawableStartCompat="@drawable/ic_git_pull_request"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/issuesChoice" />
+
+        <TextView
+            android:id="@+id/prequestsCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/pullRequestChoice"
+            app:layout_constraintBottom_toBottomOf="@id/pullRequestChoice"
+            app:layout_constraintEnd_toEndOf="@id/pullRequestChoice"
+            android:layout_marginEnd="@dimen/margin_large"
+            tools:text="0" />
+        <TextView
+            android:id="@+id/watchersChoice"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="@dimen/list_one_line_w_icon_height"
+            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/margin_large"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="@dimen/margin_large"
+            android:focusable="true"
+            android:gravity="center|start"
+            android:text="@string/watchers"
+            app:drawableStartCompat="@drawable/ic_git_watchers"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pullRequestChoice" />
+
+        <TextView
+            android:id="@+id/watchersCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/watchersChoice"
+            app:layout_constraintBottom_toBottomOf="@id/watchersChoice"
+            app:layout_constraintEnd_toEndOf="@id/watchersChoice"
+            android:layout_marginEnd="@dimen/margin_large"
+            tools:text="0" />
+
+        <View
+            android:id="@+id/firstDivider"
+            style="@style/Divider"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/starButton" />
+
+        <View
+            android:id="@+id/secondDivider"
+            style="@style/Divider"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/watchersChoice" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/starButton"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_extra_large"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:text="@string/star_button"
+            app:icon="@drawable/ic_star"
+            app:layout_constraintEnd_toStartOf="@+id/watchButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/starsCountText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/watchButton"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:text="@string/watching"
+            app:icon="@drawable/ic_watch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/starButton"
+            app:layout_constraintTop_toTopOf="@+id/starButton" />
+
+        <ImageView
+            android:id="@+id/userIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintEnd_toStartOf="@+id/authorName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/authorName"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintBottom_toBottomOf="@+id/userIcon"
+            app:layout_constraintStart_toEndOf="@id/userIcon"
+            app:layout_constraintTop_toTopOf="@id/userIcon"
+            tools:text="mshaposhnyk" />
+
+        <TextView
+            android:id="@+id/repoName"
+            style="@style/TextAppearance.MaterialComponents.Headline4"
+            android:layout_width="@dimen/match_constraints"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/primaryDarkColor"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/userIcon"
+            app:layout_constraintTop_toBottomOf="@+id/userIcon"
+            tools:text="AndroidCodelabs" />
+
+        <ImageView
+            android:id="@+id/starIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="@+id/repoName"
+            app:layout_constraintTop_toBottomOf="@+id/repoName"
+            app:tint="@color/primaryLightColor"
+            app:srcCompat="@drawable/ic_star" />
+
+        <TextView
+            android:id="@+id/starsCountText"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/starsCount"
+            app:layout_constraintBaseline_toBaselineOf="@+id/forksCountText"
+            app:layout_constraintStart_toEndOf="@id/starIcon" />
+
+        <ImageView
+            android:id="@+id/forkIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintStart_toEndOf="@+id/starsCountText"
+            app:layout_constraintTop_toBottomOf="@+id/repoName"
+            app:tint="@color/primaryLightColor"
+            app:srcCompat="@drawable/ic_fork" />
+
+        <TextView
+            android:id="@+id/forksCountText"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintBottom_toBottomOf="@+id/forkIcon"
+            app:layout_constraintStart_toEndOf="@id/forkIcon"
+            app:layout_constraintTop_toTopOf="@id/forkIcon"
+            android:text="@string/forksCount" />
+
+        <TextView
+            android:id="@+id/descriptionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_large"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/secondDivider" />
+
+        <TextView
+            android:id="@+id/desciptionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="@+id/descriptionTitle"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTitle"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pellentesque at sapien vel cursus. Nunc in magna quam. In dolor risus, posuere molestie accumsan sit amet, finibus ut turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin faucibus a risus in ultricies. Nullam vehicula dolor lorem, at sagittis purus hendrerit at. Nunc elementum egestas semper. Duis vel commodo erat. Ut semper egestas tempor. Praesent sit amet tellus pharetra, tincidunt arcu et, mattis sapien.  Vestibulum vitae vehicula arcu. Donec faucibus leo ligula, id auctor eros tempor a. Nunc consectetur est at massa consequat, quis pharetra mi auctor. Morbi imperdiet semper nisi, ac euismod libero aliquam a. Nulla id tellus id mi ullamcorper imperdiet. Etiam cursus blandit arcu id venenatis. Phasellus rhoncus nibh quis enim tristique aliquet. Duis vel ligula sed neque tincidunt hendrerit.  " />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+

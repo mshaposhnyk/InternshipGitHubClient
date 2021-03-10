@@ -10,4 +10,19 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="star_button">STAR</string>
+    <string name="watching">WATCHING</string>
+    <string name="issues">Issues</string>
+    <string name="pull_requests">Pull requests</string>
+    <string name="watchers">Watchers</string>
+    <string name="description">Description</string>
+    <string name="starsCount">%1$d Stars</string>
+    <string name="forksCount">%1$d Forks</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
+    <string name="no_issues">There aren\'t any issues</string>
+    <string name="no_watchers">Nobody watching this repository</string>
+    <string name="no_prequests">There aren\'t any pull requests</string>
+    <string name="repo_list_title">Repositories</string>
+    <string name="repo_details">Repository details</string>
 </resources>
