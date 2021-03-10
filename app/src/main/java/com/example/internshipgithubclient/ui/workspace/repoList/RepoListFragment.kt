@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
@@ -21,11 +22,11 @@ import io.reactivex.functions.Consumer
 
 import io.reactivex.observers.DisposableObserver
 
-class RepoListFragment : Fragment() {
+class RepoListFragment : Fragment(),RepoListAdapter.OnRepoClickListener {
 
     private lateinit var viewModel: RepoListViewModel
     private lateinit var compositeDisposable: CompositeDisposable
-
+    private lateinit var adapter:RepoListAdapter
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -33,9 +34,9 @@ class RepoListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_repo_list, container, false)
         val reposList = view.findViewById<RecyclerView>(R.id.repoList)
-        val repoListAdapter = RepoListAdapter()
+        adapter = RepoListAdapter(this)
         reposList.layoutManager = LinearLayoutManager(context)
-        reposList.adapter = repoListAdapter
+        reposList.adapter = adapter
         viewModel = ViewModelProvider(this).get(RepoListViewModel::class.java)
         //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
         compositeDisposable = CompositeDisposable()
@@ -47,7 +48,7 @@ class RepoListFragment : Fragment() {
                         return@flatMap Single.just(ArrayList<RepoNetworkEntity>())
                 }
                 .subscribe({
-                    repoListAdapter.data = it
+                    adapter.data = it
                 }, {
                     Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
                 })
@@ -59,4 +60,9 @@ class RepoListFragment : Fragment() {
         super.onDestroy()
         compositeDisposable.dispose()
     }
+
+    override fun onClick(v: View?, item: RepoNetworkEntity) {
+        view?.findNavController()?.navigate(RepoListFragmentDirections.actionRepoListFragmentToRepoDetailsFragment(item))
+    }
+
 }

@@ -10,8 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 
-class RepoListAdapter : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
-
+class RepoListAdapter(val listener: OnRepoClickListener) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     //List of Repos
     var data = listOf<RepoNetworkEntity>()
         set(value) {
@@ -27,15 +26,17 @@ class RepoListAdapter : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        return ViewHolder.from(parent,listener)
     }
 
-    class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder private constructor(itemView: View, val listener: OnRepoClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        lateinit var item:RepoNetworkEntity
         val primaryText: TextView = itemView.findViewById(R.id.primaryText)
         val secondaryText: TextView = itemView.findViewById(R.id.secondaryText)
         val repoImage: ImageView = itemView.findViewById(R.id.listIcon)
 
         fun bind(item: RepoNetworkEntity) {
+            this.item = item
             primaryText.text = item.name
             secondaryText.text = item.owner.login
             //Loading circle image to repoImage with Glide
@@ -43,15 +44,23 @@ class RepoListAdapter : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
                     .load(item.owner.avatarUrl)
                     .circleCrop()
                     .into(repoImage)
+            itemView.setOnClickListener(this)
         }
 
+        override fun onClick(v: View?) {
+            listener.onClick(v,item)
+        }
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
+            fun from(parent: ViewGroup,listener: OnRepoClickListener): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater
-                        .inflate(R.layout.list_item_repo, parent, false)
-                return ViewHolder(view)
+                        .inflate(R.layout.list_item_generic, parent, false)
+                return ViewHolder(view,listener)
             }
         }
+    }
+
+    interface OnRepoClickListener{
+        fun onClick(v:View?,item : RepoNetworkEntity)
     }
 }
