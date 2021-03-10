@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation.xml"
+    app:startDestination="@id/repoListFragment">
+
+    <fragment
+        android:id="@+id/repoListFragment"
+        android:name="com.example.internshipgithubclient.ui.workspace.repoList.RepoListFragment"
+        android:label="@string/repo_list_title">
+        <action
+            android:id="@+id/action_repoListFragment_to_repoDetailsFragment"
+            app:destination="@id/repoDetailsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoDetailsFragment"
+        android:name="com.example.internshipgithubclient.ui.workspace.repoDetails.RepoDetailsFragment"
+        android:label="@string/repo_details">
+        <argument
+            android:name="choosedRepo"
+            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+        <action
+            android:id="@+id/action_repoDetailsFragment_to_repoIssuesFragment"
+            app:destination="@id/repoIssuesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_repoDetailsFragment_to_repoWatchersFragment"
+            app:destination="@id/repoWatchersFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_repoDetailsFragment_to_repoPullsFragment"
+            app:destination="@id/repoPullsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoIssuesFragment"
+        android:name="com.example.internshipgithubclient.ui.workspace.repoIssues.RepoIssuesFragment"
+        android:label="@string/issues">
+        <argument
+            android:name="choosedRepo"
+            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoWatchersFragment"
+        android:name="com.example.internshipgithubclient.ui.workspace.repoWatchers.RepoWatchersFragment"
+        android:label="@string/watchers">
+        <argument
+            android:name="choosedRepo"
+            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoPullsFragment"
+        android:name="com.example.internshipgithubclient.ui.workspace.repoPulls.RepoPullsFragment"
+        android:label="@string/pull_requests">
+        <argument
+            android:name="pullsRepo"
+            app:argType="java.util.HashMap" />
+    </fragment>
+</navigation>

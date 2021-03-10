@@ -2,8 +2,13 @@
 <resources>
     <dimen name="match_constraints">0dp</dimen>
     <dimen name="big_button_height">48dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
     <dimen name="margin_large">16dp</dimen>
     <dimen name="margin_extra_large">32dp</dimen>
     <dimen name="image_extra_large_width">240dp</dimen>
     <dimen name="image_extra_large_height">240dp</dimen>
+    <dimen name="list_two_lines_w_icon_height">72dp</dimen>
+    <dimen name="list_one_line_w_icon_height">56dp</dimen>
+    <dimen name="list_two_lines_icon_size">40dp</dimen>
 </resources>

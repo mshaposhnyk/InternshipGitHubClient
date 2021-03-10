@@ -1,7 +1,10 @@
 package com.example.internshipgithubclient.network.user
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class UserNetworkEntity (
     @SerializedName("avatar_url")
     val avatarUrl: String,
@@ -31,4 +34,4 @@ data class UserNetworkEntity (
     val publicGists: Int,
     @SerializedName("public_repos")
     val publicRepos: Int
-)
+):Parcelable
