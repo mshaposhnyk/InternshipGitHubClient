@@ -13,4 +13,21 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.InternshipGitHubClient.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.InternshipGitHubClient.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.InternshipGitHubClient.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ListTextPrimaryStyle">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="ListTextSecondaryStyle">
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>
