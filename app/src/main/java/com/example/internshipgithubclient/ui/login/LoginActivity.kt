@@ -29,25 +29,22 @@ class LoginActivity : AppCompatActivity() {
             startActivityForResult(authIntent, REQUEST_AUTH)
         }
         loginViewModel.eventTokenExchanged.observe(this, Observer<Boolean> {
-            //We have an accessKey, now invoke restAPI call
-            //loginViewModel.showCurrentUserInfo()
-            // Start activity
-            startActivity(Intent(this, UserWorkSpaceActivity::class.java))
+            if(it == true){
+                // Start activity
+                startActivity(Intent(this, UserWorkSpaceActivity::class.java))
 
-            // Animate the loading of new activity
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                // Animate the loading of new activity
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 
-            // Close this activity
-            finish()
+                // Close this activity
+                finish()
+            }
         } )
-        loginViewModel.userEntity.observe(this) {
-            //Show toast with user info
-            Toast.makeText(this, it.toString(), Toast.LENGTH_LONG).show()
-        }
     }
 
     override fun onResume() {
         super.onResume()
+        //Creating authorization request
         loginViewModel.prepareAuthorization()
     }
 
