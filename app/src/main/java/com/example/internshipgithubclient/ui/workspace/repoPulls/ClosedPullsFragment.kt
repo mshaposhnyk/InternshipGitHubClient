@@ -11,23 +11,25 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class ClosedPullsFragment:Fragment(), PullsListAdapter.OnPullClickListener{
+class ClosedPullsFragment : Fragment(), PullsListAdapter.OnPullClickListener {
     //Closed,Open and RepoPullsFragment sharing the same viewModel instance
-    private val viewModel:PullsViewModel by activityViewModels()
+    private val viewModel: PullsViewModel by activityViewModels()
     private lateinit var compositeDisposable: CompositeDisposable
+    private lateinit var binding: SimpleListTabBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.simple_list_tab, container, false)
-        val listEmptytext = view.findViewById<TextView>(R.id.listEmptyText)
-        val closedList = view.findViewById<RecyclerView>(R.id.itemsList)
+    ): View {
+        binding = SimpleListTabBinding.inflate(inflater, container, false)
+        val listEmptytext = binding.listEmptyText
+        val closedList = binding.itemsList
         //fragment listens to list item onClick
         val closedListAdapter = PullsListAdapter(this)
         closedList.adapter = closedListAdapter
@@ -35,23 +37,23 @@ class ClosedPullsFragment:Fragment(), PullsListAdapter.OnPullClickListener{
         //By default we showing textview that informing about empty pull requests list
         listEmptytext.text = getString(R.string.no_prequests)
         compositeDisposable = CompositeDisposable()
-        val subscription:Disposable = viewModel.isDataLoaded.subscribe({
+        val subscription: Disposable = viewModel.isDataLoaded.subscribe({
             //if pulls are present then turn off textview and turn on recyclerview
-            if(it){
-                listEmptytext.visibility = View.GONE
-                closedList.visibility = View.VISIBLE
+            if (it) {
                 val closedPulls = viewModel.pullsMap["closed"]
                 //if pullsList not null then
-                if(closedPulls!=null){
+                if (closedPulls != null && closedPulls.isNotEmpty()) {
                     //set pullsList to recyclerview adapter
                     closedListAdapter.data = closedPulls
+                    listEmptytext.visibility = View.GONE
+                    closedList.visibility = View.VISIBLE
                 }
             }
         }, {
-            Log.e(ClosedPullsFragment::class.java.simpleName,"Error occured"+it.message)
+            Log.e(ClosedPullsFragment::class.java.simpleName, "Error occured" + it.message)
         })
         compositeDisposable.add(subscription)
-        return view
+        return binding.root
     }
 
     override fun onClick(v: View?, item: PullNetworkEntity) {}

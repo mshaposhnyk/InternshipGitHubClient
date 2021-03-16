@@ -29,7 +29,7 @@ class RepoListViewModel : ViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .map { t ->
                         userEntity = t
-                        if (userEntity != null) return@map true else false
+                        userEntity != null
                     }
         }
         return observable

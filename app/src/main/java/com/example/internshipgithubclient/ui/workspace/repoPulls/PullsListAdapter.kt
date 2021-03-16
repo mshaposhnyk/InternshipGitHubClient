@@ -9,45 +9,65 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.databinding.ListItemWcommentBinding
+import com.example.internshipgithubclient.network.STATE_CLOSED
+import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 
-class PullsListAdapter(val listener: OnPullClickListener):
+class PullsListAdapter(private val listener: OnPullClickListener) :
     RecyclerView.Adapter<PullsListAdapter.ViewHolder>() {
     //List of Pulls
     var data = listOf<PullNetworkEntity>()
-        set(value){
+        set(value) {
             field = value
             notifyDataSetChanged()
         }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder.from(parent,listener)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder.from(parent, listener)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(data[position])
 
     override fun getItemCount(): Int = data.size
 
 
-    class ViewHolder private constructor(itemView: View, val listener: OnPullClickListener) :
-        RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder private constructor(
+        binding: ListItemWcommentBinding,
+        private val listener: OnPullClickListener
+    ) :
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         lateinit var item: PullNetworkEntity
-        val primaryText: TextView = itemView.findViewById(R.id.primaryText)
-        val secondaryText: TextView = itemView.findViewById(R.id.secondaryText)
-        val pullIcon: ImageView = itemView.findViewById(R.id.listIcon)
-        val commentsCount: TextView = itemView.findViewById(R.id.comments)
+        private val primaryText: TextView = binding.primaryText
+        private val secondaryText: TextView = binding.secondaryText
+        private val pullIcon: ImageView = binding.listIcon
+        private val commentsCount: TextView = binding.comments
 
-        fun bind(item:PullNetworkEntity){
+        fun bind(item: PullNetworkEntity) {
             this.item = item
             //Pull request title
             primaryText.text = item.title
             //Pull request number
-            secondaryText.text = """#${item.number}"""
-            val issueImage = when(item.state){
-                "open" -> ResourcesCompat.getDrawable(itemView.resources,R.drawable.ic_pull_request,itemView.context.theme)
-                "closed" -> ResourcesCompat.getDrawable(itemView.resources,R.drawable.ic_pull_request,itemView.context.theme)
-                else -> ResourcesCompat.getDrawable(itemView.resources,R.drawable.ic_merge,itemView.context.theme)
+            secondaryText.text = itemView.resources.getString(R.string.repoNumber, item.number)
+            val issueImage = when (item.state) {
+                STATE_OPEN -> ResourcesCompat.getDrawable(
+                    itemView.resources,
+                    R.drawable.ic_pull_request,
+                    itemView.context.theme
+                )
+                STATE_CLOSED -> ResourcesCompat.getDrawable(
+                    itemView.resources,
+                    R.drawable.ic_pull_request,
+                    itemView.context.theme
+                )
+                else -> ResourcesCompat.getDrawable(
+                    itemView.resources,
+                    R.drawable.ic_merge,
+                    itemView.context.theme
+                )
             }
-            val issueIconTint = when(item.state){
-                "open" -> Color.GREEN
-                "closed" -> Color.RED
+            val issueIconTint = when (item.state) {
+                STATE_OPEN -> Color.GREEN
+                STATE_CLOSED -> Color.RED
                 else -> Color.MAGENTA
             }
             pullIcon.setImageDrawable(issueImage)
@@ -57,18 +77,17 @@ class PullsListAdapter(val listener: OnPullClickListener):
         }
 
         override fun onClick(v: View?) {
-
+            listener.onClick(v, item)
         }
 
         companion object {
             fun from(
                 parent: ViewGroup,
                 listener: OnPullClickListener
-            ): PullsListAdapter.ViewHolder {
+            ): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater
-                    .inflate(R.layout.list_item_wcomment, parent, false)
-                return PullsListAdapter.ViewHolder(view, listener)
+                val binding = ListItemWcommentBinding.inflate(layoutInflater, parent, false)
+                return ViewHolder(binding, listener)
             }
         }
     }
