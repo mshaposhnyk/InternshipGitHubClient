@@ -18,7 +18,7 @@ import com.example.internshipgithubclient.ui.loadCircleImage
 class RepoDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
-        container: ViewGroup?,
+        container:ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_repo_details, container, false)
