@@ -8,6 +8,8 @@ import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
@@ -16,34 +18,44 @@ class RepoDetailsViewModel:ViewModel() {
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     //map that contains pull requests
     val pullsMap:HashMap<String,List<PullNetworkEntity>> = HashMap()
+    private val compositeDisposable = CompositeDisposable()
 
     fun fetchPulls(repo:RepoNetworkEntity){
         val service = AuthStateHelper.currentAuthState.accessToken?.let{
             NetworkClient.getInstance(it).create(RepoApiService::class.java)
         }
         //getting list of pull requests and mapping them by state
-        service?.getPullsForRepo(repo.owner.login,repo.name)
-            ?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.map {
-                    pulls ->
-                val openPulls = ArrayList<PullNetworkEntity>()
-                val closedPulls = ArrayList<PullNetworkEntity>()
-                pullsMap["open"] = openPulls
-                pullsMap["closed"] = closedPulls
-                pulls.forEach {
-                    when(it.state){
-                        "open" -> openPulls.add(it)
-                        else -> closedPulls.add(it)
+        service?.let {
+            val subscription:Disposable =
+                it.getPullsForRepo(repo.owner.login,repo.name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map {
+                        pulls ->
+                    val openPulls = ArrayList<PullNetworkEntity>()
+                    val closedPulls = ArrayList<PullNetworkEntity>()
+                    pullsMap["open"] = openPulls
+                    pullsMap["closed"] = closedPulls
+                    pulls.forEach {
+                        when(it.state){
+                            "open" -> openPulls.add(it)
+                            else -> closedPulls.add(it)
+                        }
                     }
+                    return@map pulls
                 }
-                return@map pulls
-            }
-            ?.subscribe({
-                if(it.isNotEmpty())
-                    isDataLoaded.onNext(true)
-            }, {
-                Log.e(RepoDetailsViewModel::class.java.simpleName, "Error occurred" + it.message)
-            })
+                .subscribe({
+                    if(it.isNotEmpty())
+                        isDataLoaded.onNext(true)
+                }, {
+                    Log.e(RepoDetailsViewModel::class.java.simpleName, "Error occurred" + it.message)
+                })
+            compositeDisposable.add(subscription)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 }

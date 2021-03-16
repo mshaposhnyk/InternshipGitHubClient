@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 class ClosedIssuesFragment  : Fragment(), IssuesListAdapter.OnIssueClickListener {
     //Closed,Open and RepoIssuesFragment sharing the same viewModel instance
     private val viewModel:IssuesViewModel by activityViewModels()
+    private lateinit var compositeDisposable: CompositeDisposable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +34,8 @@ class ClosedIssuesFragment  : Fragment(), IssuesListAdapter.OnIssueClickListener
         closedList.layoutManager = LinearLayoutManager(context)
         //By default we showing textview that informing about empty issues list
         listEmptyText.text = getString(R.string.no_issues)
-        viewModel.isDataLoaded.subscribe({
+        compositeDisposable = CompositeDisposable()
+        val subscription: Disposable = viewModel.isDataLoaded.subscribe({
             //if issues are present then turn off textview and turn on recyclerview
             if(it){
                 listEmptyText.visibility = View.GONE
@@ -46,10 +50,14 @@ class ClosedIssuesFragment  : Fragment(), IssuesListAdapter.OnIssueClickListener
         }, {
             Log.e(ClosedIssuesFragment::class.java.simpleName, "Error occurred" + it.message)
         })
+        compositeDisposable.add(subscription)
         return view
     }
 
-    override fun onClick(v: View?, item: IssueNetworkEntity) {
+    override fun onClick(v: View?, item: IssueNetworkEntity) {}
 
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }
