@@ -11,25 +11,29 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.databinding.SimpleListTabBinding
+import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
     //Closed,Open and RepoIssuesFragment uses the same viewModel instance
-    private val viewModel:IssuesViewModel by activityViewModels()
+    private val viewModel: IssuesViewModel by activityViewModels()
     private lateinit var compositeDisposable: CompositeDisposable
+    private lateinit var binding: SimpleListTabBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.simple_list_tab, container, false)
-        val listEmptytext = view.findViewById<TextView>(R.id.listEmptyText)
+    ): View {
+        binding = SimpleListTabBinding.inflate(inflater, container, false)
+        val listEmptytext = binding.listEmptyText
         //By default we showing textview that informing about empty issues list
         listEmptytext.text = getString(R.string.no_issues)
-        val openList = view.findViewById<RecyclerView>(R.id.itemsList)
+        val openList = binding.itemsList
         //fragment listens to list item onClick
         val openListAdapter = IssuesListAdapter(this)
         openList.adapter = openListAdapter
@@ -38,13 +42,13 @@ class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
         compositeDisposable = CompositeDisposable()
         val subscription: Disposable = viewModel.isDataLoaded.subscribe({
             //if issues are present then turn off textview and turn on recyclerview
-            if(it){
-                listEmptytext.visibility = View.GONE
-                openList.visibility = View.VISIBLE
-                val openIssues = viewModel.issuesMap["open"]
+            if (it) {
+                val openIssues = viewModel.issuesMap[STATE_OPEN]
                 //if issuesList not null then
-                if(openIssues!=null){
+                if (openIssues != null && openIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
+                    listEmptytext.visibility = View.GONE
+                    openList.visibility = View.VISIBLE
                     openListAdapter.data = openIssues
                 }
             }
@@ -52,7 +56,7 @@ class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
             Log.e(OpenIssuesFragment::class.java.simpleName, "Error occurred" + it.message)
         })
         compositeDisposable.add(subscription)
-        return view
+        return binding.root
     }
 
     override fun onClick(v: View?, item: IssueNetworkEntity) {

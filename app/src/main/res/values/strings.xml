@@ -18,6 +18,7 @@
     <string name="description">Description</string>
     <string name="starsCount">%1$d Stars</string>
     <string name="forksCount">%1$d Forks</string>
+    <string name="repoNumber">#%1$d</string>
     <string name="open">Open</string>
     <string name="closed">Closed</string>
     <string name="no_issues">There aren\'t any issues</string>
