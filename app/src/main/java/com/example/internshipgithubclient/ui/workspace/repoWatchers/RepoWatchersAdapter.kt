@@ -8,56 +8,58 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.databinding.ListItemGenericBinding
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
+import com.example.internshipgithubclient.ui.loadCircleImage
 import com.example.internshipgithubclient.ui.workspace.repoIssues.IssuesListAdapter
 
-class RepoWatchersAdapter(val listener:OnWatcherClickListener) :
+class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     RecyclerView.Adapter<RepoWatchersAdapter.ViewHolder>() {
 
     //List of Watchers
     var data = listOf<UserNetworkEntity>()
-        set(value){
+        set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder.from(parent,listener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder.from(parent, listener)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(data[position])
 
     override fun getItemCount(): Int = data.size
 
-    class ViewHolder(itemView:View, val listener:OnWatcherClickListener):RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        lateinit var item:UserNetworkEntity
-        val primaryText:TextView = itemView.findViewById(R.id.primaryText)
-        val secondaryText:TextView = itemView.findViewById(R.id.secondaryText)
-        val repoImage:ImageView = itemView.findViewById(R.id.listIcon)
+    class ViewHolder(
+        binding: ListItemGenericBinding, private val listener: OnWatcherClickListener
+    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        lateinit var item: UserNetworkEntity
+        private val primaryText: TextView = binding.primaryText
+        private val secondaryText: TextView = binding.secondaryText
+        private val repoImage: ImageView = binding.listIcon
 
-        fun bind(item:UserNetworkEntity){
+        fun bind(item: UserNetworkEntity) {
             this.item = item
             primaryText.text = item.login
             secondaryText.text = item.name
-            Glide.with(repoImage.context)
-                .load(item.avatarUrl)
-                .circleCrop()
-                .into(repoImage)
+            loadCircleImage(repoImage.context, item.avatarUrl, repoImage)
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-            listener.onClick(v,item)
+            listener.onClick(v, item)
         }
-        companion object{
-            fun from(parent: ViewGroup,listener: OnWatcherClickListener) : ViewHolder {
+
+        companion object {
+            fun from(parent: ViewGroup, listener: OnWatcherClickListener): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater
-                    .inflate(R.layout.list_item_generic,parent,false)
-                return ViewHolder(view, listener)
+                val binding = ListItemGenericBinding.inflate(layoutInflater, parent, false)
+                return ViewHolder(binding, listener)
             }
         }
     }
 
-    interface OnWatcherClickListener{
-        fun onClick(v: View?, item:UserNetworkEntity)
+    interface OnWatcherClickListener {
+        fun onClick(v: View?, item: UserNetworkEntity)
     }
 }

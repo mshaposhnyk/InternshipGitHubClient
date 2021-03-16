@@ -24,14 +24,15 @@ class NetworkClient {
             //constructing authorization header content
             val tokenHeader = """ token $token"""
             //adding headers with interceptor
-            val okHttpClient: OkHttpClient = OkHttpClient.Builder().addInterceptor(Interceptor { chain ->
-                val originalRequest: Request = chain.request()
-                val newRequest: Request = originalRequest.newBuilder()
-                         .addHeader(HEADER_AUTHORIZATION, tokenHeader)
-                        .addHeader(HEADER_APPLICATION, HEADER_APPLICATION_CONTENT)
-                        .build()
-                chain.proceed(newRequest)
-            }).build()
+            val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+                                            .addInterceptor(Interceptor { chain ->
+                                                val originalRequest: Request = chain.request()
+                                                val newRequest: Request = originalRequest.newBuilder()
+                                                         .addHeader(HEADER_AUTHORIZATION, tokenHeader)
+                                                        .addHeader(HEADER_APPLICATION, HEADER_APPLICATION_CONTENT)
+                                                        .build()
+                                                chain.proceed(newRequest)
+                                            }).build()
             INSTANCE = Retrofit.Builder()
                     .baseUrl(API_URL)
                     .client(okHttpClient)

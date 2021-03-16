@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.internshipgithubclient.R
+import com.example.internshipgithubclient.databinding.ActivityLoginBinding
 import com.example.internshipgithubclient.ui.workspace.UserWorkSpaceActivity
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -15,10 +16,13 @@ import net.openid.appauth.AuthorizationResponse
 class LoginActivity : AppCompatActivity() {
     private val REQUEST_AUTH: Int = 100
     lateinit var loginViewModel: LoginViewModel
+    lateinit var binding:ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
