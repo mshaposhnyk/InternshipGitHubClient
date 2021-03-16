@@ -14,8 +14,12 @@ import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
 import com.example.internshipgithubclient.ui.workspace.repoIssues.ClosedIssuesFragment
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 class RepoWatchersFragment : Fragment(),RepoWatchersAdapter.OnWatcherClickListener {
+    private lateinit var compositeDisposable: CompositeDisposable
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,7 +41,8 @@ class RepoWatchersFragment : Fragment(),RepoWatchersAdapter.OnWatcherClickListen
         repo?.let{
             viewModel.fetchWatchers(it)
         }
-        viewModel.isDataLoaded.subscribe({
+        compositeDisposable = CompositeDisposable()
+        val subscription:Disposable = viewModel.isDataLoaded.subscribe({
             if(it){
                 //turn off textview
                 listEmptyText.visibility = View.GONE
@@ -52,10 +57,14 @@ class RepoWatchersFragment : Fragment(),RepoWatchersAdapter.OnWatcherClickListen
         }, {
             Log.e(RepoWatchersFragment::class.java.simpleName, "Error occurred" + it.message)
         })
+        compositeDisposable.add(subscription)
         return view
     }
 
-    override fun onClick(v: View?, item: UserNetworkEntity) {
+    override fun onClick(v: View?, item: UserNetworkEntity) {}
 
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

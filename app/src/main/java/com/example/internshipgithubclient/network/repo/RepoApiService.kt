@@ -14,23 +14,35 @@ import java.util.*
 interface RepoApiService {
     //Get repos pulls
     @GET("/repos/{owner}/{repo}/pulls")
-    fun getPullsForRepo(@Path("owner") owner: String,@Path("repo") repo: String, @Query("state") state:String="all"):Single<List<PullNetworkEntity>>
+    fun getPullsForRepo(@Path("owner") owner: String,
+                        @Path("repo") repo: String,
+                        @Query("state") state:String="all"
+        ):Single<List<PullNetworkEntity>>
 
     //Get issues for user repo
     @GET("/repos/{owner}/{repo}/issues")
-    fun getIssuesForRepo(@Path("owner") owner: String,@Path("repo") repo: String, @Query("state") state:String="all"):Single<List<IssueNetworkEntity>>
+    fun getIssuesForRepo(@Path("owner") owner: String,
+                         @Path("repo") repo: String,
+                         @Query("state") state:String="all"
+    ):Single<List<IssueNetworkEntity>>
 
     //Get people watching repository
     @GET("/repos/{owner}/{repo}/subscribers")
-    fun getWatchersForRepo(@Path("owner") owner:String, @Path("repo")repo:String):Single<List<UserNetworkEntity>>
+    fun getWatchersForRepo(@Path("owner") owner:String,
+                           @Path("repo")repo:String
+        ):Single<List<UserNetworkEntity>>
 
     //Get a user repository
     @GET("/repos/{owner}/{repo}")
-    fun getRepo(@Path("owner") owner:String, @Path("repo") repo:String):Single<RepoNetworkEntity>
+    fun getRepo(@Path("owner") owner:String,
+                @Path("repo") repo:String
+        ):Single<RepoNetworkEntity>
 
     //Delete a user repository
     @DELETE("/repos/{owner}/{repo}")
-    fun deleteRepo(@Path("owner") owner:String, @Path("repo") repo:String): Call<Void>
+    fun deleteRepo(@Path("owner") owner:String,
+                   @Path("repo") repo:String
+                    ): Call<Void>
 
     //Get list of public repositories
     @GET("/repositories")

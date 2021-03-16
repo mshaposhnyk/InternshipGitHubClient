@@ -21,6 +21,7 @@ class RepoPullsFragment: Fragment() {
     //Closed,Open and RepoPullsFragment sharing the same viewModel instance
     private val viewModel: PullsViewModel by activityViewModels()
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

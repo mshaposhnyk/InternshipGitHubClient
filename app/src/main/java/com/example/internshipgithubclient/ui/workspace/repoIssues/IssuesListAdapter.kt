@@ -25,7 +25,8 @@ class IssuesListAdapter(val listener: OnIssueClickListener) :
 
     override fun getItemCount(): Int = data.size
 
-    class ViewHolder private constructor(itemView:View, val listener:OnIssueClickListener) : RecyclerView.ViewHolder(itemView),View.OnClickListener{
+    class ViewHolder private constructor(itemView:View, val listener:OnIssueClickListener
+                                        ) : RecyclerView.ViewHolder(itemView),View.OnClickListener{
         lateinit var item:IssueNetworkEntity
         val primaryText: TextView = itemView.findViewById(R.id.primaryText)
         val secondaryText: TextView = itemView.findViewById(R.id.secondaryText)

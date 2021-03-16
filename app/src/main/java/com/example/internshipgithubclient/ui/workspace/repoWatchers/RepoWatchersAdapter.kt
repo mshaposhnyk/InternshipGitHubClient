@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
+import com.example.internshipgithubclient.ui.loadCircleImage
 import com.example.internshipgithubclient.ui.workspace.repoIssues.IssuesListAdapter
 
 class RepoWatchersAdapter(val listener:OnWatcherClickListener) :
@@ -27,7 +28,8 @@ class RepoWatchersAdapter(val listener:OnWatcherClickListener) :
 
     override fun getItemCount(): Int = data.size
 
-    class ViewHolder(itemView:View, val listener:OnWatcherClickListener):RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder(itemView:View, val listener:OnWatcherClickListener
+                    ):RecyclerView.ViewHolder(itemView), View.OnClickListener {
         lateinit var item:UserNetworkEntity
         val primaryText:TextView = itemView.findViewById(R.id.primaryText)
         val secondaryText:TextView = itemView.findViewById(R.id.secondaryText)
@@ -37,10 +39,7 @@ class RepoWatchersAdapter(val listener:OnWatcherClickListener) :
             this.item = item
             primaryText.text = item.login
             secondaryText.text = item.name
-            Glide.with(repoImage.context)
-                .load(item.avatarUrl)
-                .circleCrop()
-                .into(repoImage)
+            loadCircleImage(repoImage.context,item.avatarUrl,repoImage)
             itemView.setOnClickListener(this)
         }
 

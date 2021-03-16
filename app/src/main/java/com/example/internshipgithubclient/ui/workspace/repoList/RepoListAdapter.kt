@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
+import com.example.internshipgithubclient.ui.loadCircleImage
 
 class RepoListAdapter(val listener: OnRepoClickListener) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     //List of Repos
@@ -29,7 +30,8 @@ class RepoListAdapter(val listener: OnRepoClickListener) : RecyclerView.Adapter<
         return ViewHolder.from(parent,listener)
     }
 
-    class ViewHolder private constructor(itemView: View, val listener: OnRepoClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder private constructor(itemView: View, val listener: OnRepoClickListener
+                                        ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         lateinit var item:RepoNetworkEntity
         val primaryText: TextView = itemView.findViewById(R.id.primaryText)
         val secondaryText: TextView = itemView.findViewById(R.id.secondaryText)
@@ -40,10 +42,7 @@ class RepoListAdapter(val listener: OnRepoClickListener) : RecyclerView.Adapter<
             primaryText.text = item.name
             secondaryText.text = item.owner.login
             //Loading circle image to repoImage with Glide
-            Glide.with(repoImage.context)
-                    .load(item.owner.avatarUrl)
-                    .circleCrop()
-                    .into(repoImage)
+            loadCircleImage(repoImage.context,item.owner.avatarUrl,repoImage)
             itemView.setOnClickListener(this)
         }
 

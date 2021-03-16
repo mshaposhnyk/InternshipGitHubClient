@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
+import com.example.internshipgithubclient.ui.loadCircleImage
 
 class RepoDetailsFragment : Fragment() {
     override fun onCreateView(
@@ -42,10 +43,7 @@ class RepoDetailsFragment : Fragment() {
         //if repo is not null then set data in ui
         repo?.let {
             //load circle avatar of user who owns this repo
-            Glide.with(view.context)
-                .load(repo.owner.avatarUrl)
-                .circleCrop()
-                .into(userIcon)
+            loadCircleImage(view.context,repo.owner.avatarUrl,userIcon)
             userName.text = repo.owner.login
             repoName.text = repo.name
             repoDescription.text = repo.description
@@ -56,11 +54,13 @@ class RepoDetailsFragment : Fragment() {
             watchersCount.text = repo.watchersCount.toString()
             //Navigate to issues fragment
             issuesButton.setOnClickListener {
-                view.findNavController().navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoIssuesFragment(repo))
+                view.findNavController()
+                    .navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoIssuesFragment(repo))
             }
             //Navigate to watchers fragment
             watchersButton.setOnClickListener {
-                view.findNavController().navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoWatchersFragment(repo))
+                view.findNavController()
+                    .navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoWatchersFragment(repo))
             }
             //Ask view models for pull requests
             viewModel.fetchPulls(it)
@@ -71,7 +71,8 @@ class RepoDetailsFragment : Fragment() {
                     prequestsCount.text = viewModel.pullsMap["open"]?.size.toString()
                     //navigate to Pulls fragment
                     prequestsButton.setOnClickListener {
-                        view.findNavController().navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoPullsFragment(viewModel.pullsMap))
+                        view.findNavController()
+                            .navigate(RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoPullsFragment(viewModel.pullsMap))
                     }
                 }
             }, {
