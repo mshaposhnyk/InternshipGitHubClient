@@ -25,6 +25,7 @@ class RepoPullsFragment : Fragment() {
     private val viewModel: PullsViewModel by activityViewModels()
     private lateinit var binding: FragmentWtabsGenericBinding
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
