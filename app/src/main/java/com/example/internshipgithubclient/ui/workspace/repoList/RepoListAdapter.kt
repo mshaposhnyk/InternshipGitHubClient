@@ -33,19 +33,16 @@ class RepoListAdapter(private val listener: OnRepoClickListener) :
     }
 
     class ViewHolder private constructor(
-        binding: ListItemGenericBinding, private val listener: OnRepoClickListener
+        val binding: ListItemGenericBinding, private val listener: OnRepoClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         lateinit var item: RepoNetworkEntity
-        private val primaryText: TextView = binding.primaryText
-        private val secondaryText: TextView = binding.secondaryText
-        private val repoImage: ImageView = binding.listIcon
 
         fun bind(item: RepoNetworkEntity) {
             this.item = item
-            primaryText.text = item.name
-            secondaryText.text = item.owner.login
+            binding.primaryText.text = item.name
+            binding.secondaryText.text = item.owner.login
             //Loading circle image to repoImage with Glide
-            loadCircleImage(repoImage.context, item.owner.avatarUrl, repoImage)
+            loadCircleImage(itemView.context, item.owner.avatarUrl, binding.listIcon)
             itemView.setOnClickListener(this)
         }
 

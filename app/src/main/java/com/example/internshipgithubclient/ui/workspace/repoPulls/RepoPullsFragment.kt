@@ -13,18 +13,15 @@ import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import com.example.internshipgithubclient.ui.workspace.repoIssues.IssuesPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.util.*
 
 class RepoPullsFragment : Fragment() {
     //ViewPager adapter for instantiating right fragments in viewpager
     private lateinit var viewPagerAdapter: PullsPagerAdapter
 
-    //ViewPager for switching tabs with slide gesture
-    private lateinit var viewPager: ViewPager2
-
     //Closed,Open and RepoPullsFragment sharing the same viewModel instance
     private val viewModel: PullsViewModel by activityViewModels()
     private lateinit var binding: FragmentWtabsGenericBinding
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,25 +29,27 @@ class RepoPullsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWtabsGenericBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewPagerAdapter = PullsPagerAdapter(parentFragmentManager, lifecycle)
-        viewPager = binding.issuesPages
-        val tabLayout = binding.issuesTabs
         //setting adapter for viewPager
-        viewPager.adapter = viewPagerAdapter
+        binding.issuesPages.adapter = viewPagerAdapter
         //Attaching tabs to viewPager
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        TabLayoutMediator(binding.issuesTabs, binding.issuesPages) { tab, position ->
             tab.text = "placeholder"
             when (position) {
                 0 -> tab.text = getString(R.string.open)
                 1 -> tab.text = getString(R.string.closed)
             }
         }.attach()
-        val pulls: HashMap<String, List<PullNetworkEntity>>? =
-            arguments?.getSerializable("pullsRepo") as HashMap<String, List<PullNetworkEntity>>?
+        val pullsList =
+            (arguments?.getParcelableArray("repoPulls") as Array<PullNetworkEntity>).toList()
         //if map of pull requests is not null then set it in viewmodel
-        pulls?.let {
+        pullsList.let {
             viewModel.setPulls(it)
         }
-        return binding.root
     }
 }

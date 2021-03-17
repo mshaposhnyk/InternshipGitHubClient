@@ -1,7 +1,5 @@
 package com.example.internshipgithubclient.ui.workspace.repoList
 
-import android.accounts.NetworkErrorException
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,22 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentRepoListBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
-import io.reactivex.Single
-import io.reactivex.SingleObserver
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
-
-import io.reactivex.observers.DisposableObserver
 
 class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
 
     private lateinit var viewModel: RepoListViewModel
-    private lateinit var compositeDisposable: CompositeDisposable
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var adapter: RepoListAdapter
     private lateinit var binding: FragmentRepoListBinding
 
@@ -36,27 +26,39 @@ class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentRepoListBinding.inflate(inflater, container, false)
-        val reposList = binding.repoList
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapter = RepoListAdapter(this)
-        reposList.layoutManager = LinearLayoutManager(context)
-        reposList.adapter = adapter
+        binding.repoList.layoutManager = LinearLayoutManager(context)
+        binding.repoList.adapter = adapter
         viewModel = ViewModelProvider(this).get(RepoListViewModel::class.java)
         //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
-        compositeDisposable = CompositeDisposable()
-        val disposable = viewModel.eventGotUser()
-            .flatMap { userLoaded ->
-                if (userLoaded)
-                    viewModel.fetchUserRepos()
-                else
-                    Single.just(ArrayList<RepoNetworkEntity>())
+        viewModel.eventGotUser()
+        val subscrUser = viewModel.isUserDataLoaded.subscribe({
+            if (it) {
+                viewModel.fetchUserRepos()
+                viewModel.isUserDataLoaded.onNext(false)
             }
-            .subscribe({
-                adapter.data = it
-            }, {
-                Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
-            })
-        compositeDisposable.add(disposable)
-        return binding.root
+        }, {
+            Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
+        })
+        val subscrRepo = viewModel.isRepoDataLoaded.subscribe({
+            if (it) {
+                adapter.data = viewModel.repoList
+                viewModel.isRepoDataLoaded.onNext(false)
+                binding.root.isRefreshing = false
+            }
+        }, {
+            Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
+        })
+        binding.root.setOnRefreshListener {
+            viewModel.fetchUserRepos()
+        }
+        compositeDisposable.add(subscrUser)
+        compositeDisposable.add(subscrRepo)
     }
 
     override fun onDestroy() {

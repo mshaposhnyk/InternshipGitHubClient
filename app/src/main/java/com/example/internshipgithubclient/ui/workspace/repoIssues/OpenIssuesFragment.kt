@@ -5,11 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.STATE_OPEN
@@ -20,7 +18,7 @@ import io.reactivex.disposables.Disposable
 class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
     //Closed,Open and RepoIssuesFragment uses the same viewModel instance
     private val viewModel: IssuesViewModel by activityViewModels()
-    private lateinit var compositeDisposable: CompositeDisposable
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
 
@@ -39,13 +37,12 @@ class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
         openList.adapter = openListAdapter
         openList.layoutManager = LinearLayoutManager(context)
         listEmptytext.text = getString(R.string.no_issues)
-        compositeDisposable = CompositeDisposable()
         val subscription: Disposable = viewModel.isDataLoaded.subscribe({
             //if issues are present then turn off textview and turn on recyclerview
             if (it) {
-                val openIssues = viewModel.issuesMap[STATE_OPEN]
+                val openIssues = viewModel.issues.filter { issue -> issue.state == STATE_OPEN }
                 //if issuesList not null then
-                if (openIssues != null && openIssues.isNotEmpty()) {
+                if (openIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
                     listEmptytext.visibility = View.GONE
                     openList.visibility = View.VISIBLE

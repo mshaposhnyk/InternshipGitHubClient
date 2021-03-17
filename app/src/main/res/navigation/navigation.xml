@@ -59,7 +59,7 @@
         android:name="com.example.internshipgithubclient.ui.workspace.repoPulls.RepoPullsFragment"
         android:label="@string/pull_requests">
         <argument
-            android:name="pullsRepo"
-            app:argType="java.util.HashMap" />
+            android:name="repoPulls"
+            app:argType="com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity[]" />
     </fragment>
 </navigation>

@@ -30,6 +30,11 @@ class RepoIssuesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWtabsGenericBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewPagerAdapter = IssuesPagerAdapter(parentFragmentManager, lifecycle)
         viewPager = binding.issuesPages
         val tabLayout = binding.issuesTabs
@@ -48,6 +53,5 @@ class RepoIssuesFragment : Fragment() {
         repo?.let {
             viewModel.fetchIssues(it)
         }
-        return binding.root
     }
 }

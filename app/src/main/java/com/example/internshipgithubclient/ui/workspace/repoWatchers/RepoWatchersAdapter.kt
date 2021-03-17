@@ -31,18 +31,15 @@ class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     override fun getItemCount(): Int = data.size
 
     class ViewHolder(
-        binding: ListItemGenericBinding, private val listener: OnWatcherClickListener
+        val binding: ListItemGenericBinding, private val listener: OnWatcherClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         lateinit var item: UserNetworkEntity
-        private val primaryText: TextView = binding.primaryText
-        private val secondaryText: TextView = binding.secondaryText
-        private val repoImage: ImageView = binding.listIcon
 
         fun bind(item: UserNetworkEntity) {
             this.item = item
-            primaryText.text = item.login
-            secondaryText.text = item.name
-            loadCircleImage(repoImage.context, item.avatarUrl, repoImage)
+            binding.primaryText.text = item.login
+            binding.secondaryText.text = item.name
+            loadCircleImage(itemView.context, item.avatarUrl, binding.listIcon)
             itemView.setOnClickListener(this)
         }
 
