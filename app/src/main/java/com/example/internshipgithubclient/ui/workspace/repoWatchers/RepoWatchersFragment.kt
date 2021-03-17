@@ -19,37 +19,39 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 class RepoWatchersFragment : Fragment(), RepoWatchersAdapter.OnWatcherClickListener {
-    private lateinit var compositeDisposable: CompositeDisposable
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = SimpleListTabBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(this).get(RepoWatchersViewModel::class.java)
-        val listEmptyText = binding.listEmptyText
-        val watchList = binding.itemsList
         //Fragment listens to click on item
         val watchListAdapter = RepoWatchersAdapter(this)
         //Setting adapter for a recyclerview
-        watchList.adapter = watchListAdapter
-        watchList.layoutManager = LinearLayoutManager(context)
+        binding.itemsList.adapter = watchListAdapter
+        binding.itemsList.layoutManager = LinearLayoutManager(context)
         //Set default text for textview if nobody watching repositoty
-        listEmptyText.text = getString(R.string.no_watchers)
+        binding.listEmptyText.text = getString(R.string.no_watchers)
         val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
         //if repo is not null then fetch for watchers list
         repo?.let {
             viewModel.fetchWatchers(it)
         }
-        compositeDisposable = CompositeDisposable()
         val subscription: Disposable = viewModel.isDataLoaded.subscribe({
             if (it) {
                 //turn off textview
-                listEmptyText.visibility = View.GONE
+                binding.listEmptyText.visibility = View.GONE
                 //turn on recyclerview
-                watchList.visibility = View.VISIBLE
+                binding.itemsList.visibility = View.VISIBLE
                 val watchers = viewModel.listWatchers
                 watchListAdapter.data = watchers
             }
@@ -57,7 +59,6 @@ class RepoWatchersFragment : Fragment(), RepoWatchersAdapter.OnWatcherClickListe
             Log.e(RepoWatchersFragment::class.java.simpleName, "Error occurred" + it.message)
         })
         compositeDisposable.add(subscription)
-        return view
     }
 
     override fun onClick(v: View?, item: UserNetworkEntity) {}

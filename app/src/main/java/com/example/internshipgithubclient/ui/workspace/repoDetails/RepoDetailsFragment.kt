@@ -5,14 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.bumptech.glide.Glide
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentRepoDetailsBinding
+import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
 
@@ -25,6 +23,11 @@ class RepoDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentRepoDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(this).get(RepoDetailsViewModel::class.java)
         //getting choosed repo from arguments
         val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
@@ -66,7 +69,7 @@ class RepoDetailsFragment : Fragment() {
                 binding.root.findNavController()
                     .navigate(
                         RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoPullsFragment(
-                            viewModel.pullsMap
+                            viewModel.pulls.toTypedArray()
                         )
                     )
             }
@@ -74,15 +77,15 @@ class RepoDetailsFragment : Fragment() {
             viewModel.fetchPulls(it)
             viewModel.isDataLoaded.subscribe({
                 //if loading of pulls completed then
-                if (it && viewModel.pullsMap.isNotEmpty()) {
+                if (it && viewModel.pulls.isNotEmpty()) {
                     //set count of open pull requests
-                    binding.prequestsCounter.text = viewModel.pullsMap["open"]?.size.toString()
+                    binding.prequestsCounter.text =
+                        viewModel.pulls.filter { pull -> pull.state == STATE_OPEN }.size.toString()
                     //navigate to Pulls fragment
                 }
             }, {
                 Log.e(RepoDetailsFragment::class.java.simpleName, "Error occurred" + it.message)
             })
         }
-        return binding.root
     }
 }

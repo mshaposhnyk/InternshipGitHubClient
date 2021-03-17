@@ -20,7 +20,7 @@ class RepoDetailsViewModel : ViewModel() {
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     //map that contains pull requests
-    val pullsMap: HashMap<String, List<PullNetworkEntity>> = HashMap()
+    lateinit var pulls: List<PullNetworkEntity>
     private val compositeDisposable = CompositeDisposable()
 
     fun fetchPulls(repo: RepoNetworkEntity) {
@@ -33,14 +33,8 @@ class RepoDetailsViewModel : ViewModel() {
                 apiService.getPullsForRepo(repo.owner.login, repo.name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .map { pulls ->
-                        val openPulls = pulls.filter { pull -> pull.state == STATE_OPEN }
-                        val closedPulls = pulls.filterNot { pull -> pull.state != STATE_OPEN }
-                        pullsMap[STATE_OPEN] = openPulls
-                        pullsMap[STATE_CLOSED] = closedPulls
-                        pulls
-                    }
                     .subscribe({
+                        pulls = it
                         if (it.isNotEmpty())
                             isDataLoaded.onNext(true)
                     }, {

@@ -31,18 +31,14 @@ class IssuesListAdapter(private val listener: OnIssueClickListener) :
     override fun getItemCount(): Int = data.size
 
     class ViewHolder private constructor(
-        binding: ListItemWcommentBinding, private val listener: OnIssueClickListener
+        val binding: ListItemWcommentBinding, private val listener: OnIssueClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         lateinit var item: IssueNetworkEntity
-        private val primaryText: TextView = binding.primaryText
-        private val secondaryText: TextView = binding.secondaryText
-        private val issueIcon: ImageView = binding.listIcon
-        private val commentsCount: TextView = binding.comments
 
         fun bind(item: IssueNetworkEntity) {
             this.item = item
-            primaryText.text = item.title
-            secondaryText.text = item.body
+            binding.primaryText.text = item.title
+            binding.secondaryText.text = item.body
             val issueImage = when (item.state) {
                 STATE_OPEN -> ResourcesCompat.getDrawable(
                     itemView.resources,
@@ -65,9 +61,9 @@ class IssuesListAdapter(private val listener: OnIssueClickListener) :
                 STATE_CLOSED -> Color.RED
                 else -> Color.RED + Color.YELLOW
             }
-            issueIcon.setImageDrawable(issueImage)
-            issueIcon.setColorFilter(issueIconTint)
-            commentsCount.text = item.commentsCount.toString()
+            binding.listIcon.setImageDrawable(issueImage)
+            binding.listIcon.setColorFilter(issueIconTint)
+            binding.comments.text = item.commentsCount.toString()
             itemView.setOnClickListener(this)
         }
 

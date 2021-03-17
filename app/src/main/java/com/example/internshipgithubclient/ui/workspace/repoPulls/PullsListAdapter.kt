@@ -32,22 +32,19 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
 
 
     class ViewHolder private constructor(
-        binding: ListItemWcommentBinding,
+        val binding: ListItemWcommentBinding,
         private val listener: OnPullClickListener
     ) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         lateinit var item: PullNetworkEntity
-        private val primaryText: TextView = binding.primaryText
-        private val secondaryText: TextView = binding.secondaryText
-        private val pullIcon: ImageView = binding.listIcon
-        private val commentsCount: TextView = binding.comments
 
         fun bind(item: PullNetworkEntity) {
             this.item = item
             //Pull request title
-            primaryText.text = item.title
+            binding.primaryText.text = item.title
             //Pull request number
-            secondaryText.text = itemView.resources.getString(R.string.repoNumber, item.number)
+            binding.secondaryText.text =
+                itemView.resources.getString(R.string.repoNumber, item.number)
             val issueImage = when (item.state) {
                 STATE_OPEN -> ResourcesCompat.getDrawable(
                     itemView.resources,
@@ -70,9 +67,9 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
                 STATE_CLOSED -> Color.RED
                 else -> Color.MAGENTA
             }
-            pullIcon.setImageDrawable(issueImage)
-            pullIcon.setColorFilter(issueIconTint)
-            commentsCount.visibility = View.INVISIBLE
+            binding.listIcon.setImageDrawable(issueImage)
+            binding.listIcon.setColorFilter(issueIconTint)
+            binding.comments.visibility = View.INVISIBLE
             itemView.setOnClickListener(this)
         }
 

@@ -18,7 +18,7 @@ import io.reactivex.subjects.BehaviorSubject
 
 class IssuesViewModel() : ViewModel() {
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
-    val issuesMap: HashMap<String, List<IssueNetworkEntity>> = HashMap()
+    lateinit var issues: List<IssueNetworkEntity>
     private val compositeDisposable = CompositeDisposable()
 
     fun fetchIssues(repo: RepoNetworkEntity) {
@@ -31,14 +31,8 @@ class IssuesViewModel() : ViewModel() {
                 apiService.getIssuesForRepo(repo.owner.login, repo.name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .map { issues ->
-                        val openIssues = issues.filter { issue -> issue.state == STATE_OPEN }
-                        val closedIssues = issues.filterNot { issue -> issue.state != STATE_CLOSED }
-                        issuesMap[STATE_OPEN] = openIssues
-                        issuesMap[STATE_CLOSED] = closedIssues
-                        issues
-                    }
                     .subscribe({
+                        issues = it
                         if (it.isNotEmpty())
                             isDataLoaded.onNext(true)
                     }, {

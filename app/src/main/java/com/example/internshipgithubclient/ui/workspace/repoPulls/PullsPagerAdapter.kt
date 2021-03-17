@@ -5,12 +5,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class PullsPagerAdapter (fragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(fragmentManager,lifecycle) {
+class PullsPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
+    FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
-        return when(position){
+        return when (position) {
             0 -> OpenPullsFragment()
             1 -> ClosedPullsFragment()
             else -> OpenPullsFragment()
