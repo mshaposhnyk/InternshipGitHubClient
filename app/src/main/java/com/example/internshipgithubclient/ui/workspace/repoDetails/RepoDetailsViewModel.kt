@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.internshipgithubclient.network.AuthStateHelper
 import com.example.internshipgithubclient.network.NetworkClient
-import com.example.internshipgithubclient.network.STATE_CLOSED
-import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity

@@ -31,6 +31,7 @@ class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         adapter = RepoListAdapter(this)
         binding.repoList.layoutManager = LinearLayoutManager(context)
         binding.repoList.adapter = adapter
@@ -40,7 +41,6 @@ class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
         val subscrUser = viewModel.isUserDataLoaded.subscribe({
             if (it) {
                 viewModel.fetchUserRepos()
-                viewModel.isUserDataLoaded.onNext(false)
             }
         }, {
             Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
