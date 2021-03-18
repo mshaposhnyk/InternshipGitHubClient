@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
-import com.example.internshipgithubclient.network.STATE_CLOSED
 import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
 import io.reactivex.disposables.CompositeDisposable
@@ -45,7 +44,7 @@ class ClosedIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener 
             //if issues are present then turn off textview and turn on recyclerview
             if (it) {
                 val closedIssues = viewModel.issues.filter { issue -> issue.state != STATE_OPEN }
-                //if issuesList not null then
+                //if issuesList not empty then
                 if (closedIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
                     closedListAdapter.data = closedIssues

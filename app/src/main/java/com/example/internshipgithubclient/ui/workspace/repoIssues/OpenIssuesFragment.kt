@@ -41,7 +41,7 @@ class OpenIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
             //if issues are present then turn off textview and turn on recyclerview
             if (it) {
                 val openIssues = viewModel.issues.filter { issue -> issue.state == STATE_OPEN }
-                //if issuesList not null then
+                //if issuesList not empty then
                 if (openIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
                     listEmptytext.visibility = View.GONE

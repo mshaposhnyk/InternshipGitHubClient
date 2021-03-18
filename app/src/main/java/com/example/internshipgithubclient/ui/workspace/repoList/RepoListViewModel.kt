@@ -8,7 +8,6 @@ import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserApiService
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

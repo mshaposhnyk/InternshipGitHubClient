@@ -3,15 +3,10 @@ package com.example.internshipgithubclient.ui.workspace.repoWatchers
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.ListItemGenericBinding
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
-import com.example.internshipgithubclient.ui.workspace.repoIssues.IssuesListAdapter
 
 class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     RecyclerView.Adapter<RepoWatchersAdapter.ViewHolder>() {

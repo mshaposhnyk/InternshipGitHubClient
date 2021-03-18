@@ -5,16 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
-import com.example.internshipgithubclient.ui.workspace.repoIssues.ClosedIssuesFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
