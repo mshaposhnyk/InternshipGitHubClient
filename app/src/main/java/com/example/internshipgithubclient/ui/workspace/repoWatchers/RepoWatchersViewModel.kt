@@ -2,8 +2,6 @@ package com.example.internshipgithubclient.ui.workspace.repoWatchers
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.internshipgithubclient.network.AuthStateHelper
-import com.example.internshipgithubclient.network.NetworkClient
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
@@ -13,18 +11,20 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import retrofit2.Retrofit
+import javax.inject.Inject
 
-class RepoWatchersViewModel : ViewModel() {
+class RepoWatchersViewModel @Inject constructor() : ViewModel() {
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     lateinit var listWatchers: List<UserNetworkEntity>
     private val compositeDisposable = CompositeDisposable()
 
+    @Inject
+    lateinit var repoApiService: RepoApiService
+
     fun fetchWatchers(repo: RepoNetworkEntity) {
-        val service = AuthStateHelper.currentAuthState.accessToken?.let {
-            NetworkClient.getInstance(it).create(RepoApiService::class.java)
-        }
         //getting list of watchers for a given repo
-        service?.let { apiService ->
+        repoApiService.let { apiService ->
             val subscription: Disposable =
                 apiService.getWatchersForRepo(repo.owner.login, repo.name)
                     .subscribeOn(Schedulers.io())

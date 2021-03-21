@@ -1,5 +1,6 @@
 package com.example.internshipgithubclient.ui.workspace.repoWatchers
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,10 +13,19 @@ import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
-class RepoWatchersFragment : Fragment(), RepoWatchersAdapter.OnWatcherClickListener {
+class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClickListener {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(RepoWatchersViewModel::class.java)
+    }
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
@@ -30,7 +40,6 @@ class RepoWatchersFragment : Fragment(), RepoWatchersAdapter.OnWatcherClickListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModel = ViewModelProvider(this).get(RepoWatchersViewModel::class.java)
         //Fragment listens to click on item
         val watchListAdapter = RepoWatchersAdapter(this)
         //Setting adapter for a recyclerview

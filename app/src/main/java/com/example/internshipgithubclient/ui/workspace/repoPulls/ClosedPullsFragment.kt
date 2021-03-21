@@ -5,19 +5,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
-class ClosedPullsFragment : Fragment(), PullsListAdapter.OnPullClickListener {
+class ClosedPullsFragment : DaggerFragment(), PullsListAdapter.OnPullClickListener {
     //Closed,Open and RepoPullsFragment sharing the same viewModel instance
-    private val viewModel: PullsViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(PullsViewModel::class.java)
+    }
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
