@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentWtabsGenericBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class RepoIssuesFragment : Fragment() {
+class RepoIssuesFragment : DaggerFragment() {
     //ViewPager adapter for instantiating right fragments in viewpager
     private lateinit var viewPagerAdapter: IssuesPagerAdapter
 
@@ -21,7 +21,12 @@ class RepoIssuesFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
 
     //Closed,Open and RepoIssuesFragment uses the same viewModel instance
-    private val viewModel: IssuesViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(IssuesViewModel::class.java)
+    }
     private lateinit var binding: FragmentWtabsGenericBinding
 
     override fun onCreateView(
@@ -35,7 +40,7 @@ class RepoIssuesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewPagerAdapter = IssuesPagerAdapter(parentFragmentManager, lifecycle)
+        viewPagerAdapter = IssuesPagerAdapter(childFragmentManager, lifecycle)
         viewPager = binding.issuesPages
         val tabLayout = binding.issuesTabs
         //setting adapter for viewPager

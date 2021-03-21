@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.internshipgithubclient.R
@@ -13,9 +12,18 @@ import com.example.internshipgithubclient.databinding.FragmentRepoDetailsBinding
 import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class RepoDetailsFragment : Fragment() {
+class RepoDetailsFragment : DaggerFragment() {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(RepoDetailsViewModel::class.java)
+    }
     private lateinit var binding: FragmentRepoDetailsBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +36,6 @@ class RepoDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModel = ViewModelProvider(this).get(RepoDetailsViewModel::class.java)
         //getting choosed repo from arguments
         val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
         //if repo is not null then set data in ui

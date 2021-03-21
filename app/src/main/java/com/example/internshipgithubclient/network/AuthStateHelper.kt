@@ -1,7 +1,6 @@
 package com.example.internshipgithubclient.network
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -15,11 +14,14 @@ import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.TokenResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "authState")
 val STATE: Preferences.Key<String> = stringPreferencesKey("state")
 
-object AuthStateHelper {
+@Singleton
+class AuthStateHelper @Inject constructor() {
     //keeps accessToken, scopes
     var currentAuthState: AuthState = AuthState()
 

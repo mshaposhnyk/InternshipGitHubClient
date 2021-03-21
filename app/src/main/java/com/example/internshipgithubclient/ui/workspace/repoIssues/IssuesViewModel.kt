@@ -2,29 +2,31 @@ package com.example.internshipgithubclient.ui.workspace.repoIssues
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.internshipgithubclient.network.AuthStateHelper
-import com.example.internshipgithubclient.network.NetworkClient
+import com.example.internshipgithubclient.di.FragmentScope
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
-
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import retrofit2.Retrofit
+import javax.inject.Inject
 
-class IssuesViewModel() : ViewModel() {
+@FragmentScope
+class IssuesViewModel @Inject constructor() : ViewModel() {
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     lateinit var issues: List<IssueNetworkEntity>
     private val compositeDisposable = CompositeDisposable()
 
+    @Inject
+    lateinit var service: RepoApiService
+
+
     fun fetchIssues(repo: RepoNetworkEntity) {
-        val service = AuthStateHelper.currentAuthState.accessToken?.let {
-            NetworkClient.getInstance(it).create(RepoApiService::class.java)
-        }
         //getting list of issues and mapping them by state
-        service?.let { apiService ->
+        service.let { apiService ->
             val subscription: Disposable =
                 apiService.getIssuesForRepo(repo.owner.login, repo.name)
                     .subscribeOn(Schedulers.io())
