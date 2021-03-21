@@ -5,20 +5,27 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.internshipgithubclient.databinding.FragmentRepoListBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
+class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
 
-    private lateinit var viewModel: RepoListViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(RepoListViewModel::class.java)
+    }
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var adapter: RepoListAdapter
     private lateinit var binding: FragmentRepoListBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +42,6 @@ class RepoListFragment : Fragment(), RepoListAdapter.OnRepoClickListener {
         adapter = RepoListAdapter(this)
         binding.repoList.layoutManager = LinearLayoutManager(context)
         binding.repoList.adapter = adapter
-        viewModel = ViewModelProvider(this).get(RepoListViewModel::class.java)
         //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
         viewModel.eventGotUser()
         val subscrUser = viewModel.isUserDataLoaded.subscribe({

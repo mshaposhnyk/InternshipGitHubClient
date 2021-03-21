@@ -2,8 +2,6 @@ package com.example.internshipgithubclient.ui.workspace.repoDetails
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.internshipgithubclient.network.AuthStateHelper
-import com.example.internshipgithubclient.network.NetworkClient
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
@@ -12,21 +10,23 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import retrofit2.Retrofit
+import javax.inject.Inject
 
-class RepoDetailsViewModel : ViewModel() {
+class RepoDetailsViewModel @Inject constructor() : ViewModel() {
     //BehaviorSubject similar to LiveData in RX Java
     val isDataLoaded: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    //map that contains pull requests
+    //list that contains pull requests
     lateinit var pulls: List<PullNetworkEntity>
     private val compositeDisposable = CompositeDisposable()
 
+    @Inject
+    lateinit var service: RepoApiService
+
     fun fetchPulls(repo: RepoNetworkEntity) {
-        val service = AuthStateHelper.currentAuthState.accessToken?.let {
-            NetworkClient.getInstance(it).create(RepoApiService::class.java)
-        }
         //getting list of pull requests and mapping them by state
-        service?.let { apiService ->
+        service.let { apiService ->
             val subscription: Disposable =
                 apiService.getPullsForRepo(repo.owner.login, repo.name)
                     .subscribeOn(Schedulers.io())

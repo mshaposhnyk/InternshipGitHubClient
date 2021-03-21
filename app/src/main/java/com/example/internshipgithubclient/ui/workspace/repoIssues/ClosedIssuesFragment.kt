@@ -5,21 +5,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import com.example.internshipgithubclient.network.STATE_OPEN
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
-class ClosedIssuesFragment : Fragment(), IssuesListAdapter.OnIssueClickListener {
+class ClosedIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickListener {
     //Closed,Open and RepoIssuesFragment sharing the same viewModel instance
-    private val viewModel: IssuesViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(IssuesViewModel::class.java)
+    }
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

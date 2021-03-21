@@ -1,22 +1,28 @@
 package com.example.internshipgithubclient.ui.login
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.ActivityLoginBinding
 import com.example.internshipgithubclient.ui.workspace.UserWorkSpaceActivity
+import dagger.android.support.DaggerAppCompatActivity
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import javax.inject.Inject
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : DaggerAppCompatActivity() {
     private val REQUEST_AUTH: Int = 100
-    lateinit var loginViewModel: LoginViewModel
-    lateinit var binding:ActivityLoginBinding
+    lateinit var binding: ActivityLoginBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val loginViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(LoginViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,32 +30,40 @@ class LoginActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-
         val loginButton = findViewById<Button>(R.id.loginButton)
         loginButton.setOnClickListener {
             //Open browser for typing in credentials
             val authIntent = loginViewModel.provideAuthIntent()
             startActivityForResult(authIntent, REQUEST_AUTH)
         }
-        loginViewModel.eventTokenExchanged.observe(this, Observer<Boolean> {
-            if(it == true){
-                // Start activity
-                startActivity(Intent(this, UserWorkSpaceActivity::class.java))
+        loginViewModel.eventTokenExchanged.observe(this, {
+            moveToUserWorkSpaceActivity(it)
+        })
+    }
 
-                // Animate the loading of new activity
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    private fun moveToUserWorkSpaceActivity(tokenExchanged: Boolean) {
+        if (tokenExchanged) {
+            // Start activity
+            startActivity(Intent(this, UserWorkSpaceActivity::class.java))
 
-                // Close this activity
-                finish()
-            }
-        } )
+            // Animate the loading of new activity
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+
+            // Close this activity
+            finish()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        //Creating authorization request
-        loginViewModel.prepareAuthorization()
+        val isAuthorized = loginViewModel.checkIfAuthorized()
+        //If authorized then open RepoListFragment
+        if (isAuthorized) {
+            moveToUserWorkSpaceActivity(isAuthorized)
+        } else {
+            //Creating authorization request
+            loginViewModel.prepareAuthorization()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
