@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.databinding.ListItemGenericBinding
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
@@ -11,7 +12,7 @@ import com.example.internshipgithubclient.ui.loadCircleImage
 class RepoListAdapter(private val listener: OnRepoClickListener) :
     RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
     //List of Repos
-    var data = listOf<RepoNetworkEntity>()
+    var data = listOf<Repo>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -31,9 +32,9 @@ class RepoListAdapter(private val listener: OnRepoClickListener) :
     class ViewHolder private constructor(
         val binding: ListItemGenericBinding, private val listener: OnRepoClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        lateinit var item: RepoNetworkEntity
+        lateinit var item: Repo
 
-        fun bind(item: RepoNetworkEntity) {
+        fun bind(item: Repo) {
             this.item = item
             binding.primaryText.text = item.name
             binding.secondaryText.text = item.owner.login
@@ -56,6 +57,6 @@ class RepoListAdapter(private val listener: OnRepoClickListener) :
     }
 
     interface OnRepoClickListener {
-        fun onClick(v: View?, item: RepoNetworkEntity)
+        fun onClick(v: View?, item: Repo)
     }
 }
