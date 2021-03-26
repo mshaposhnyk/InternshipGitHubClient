@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RestIssueDataSource (val repoApiService: RepoApiService):IssueDataSource {
-    override suspend fun getRepoIssues(repo: Repo): Single<List<Issue>> {
+    override fun getRepoIssues(repo: Repo): Single<List<Issue>> {
         return repoApiService.getIssuesForRepo(repo.owner.login, repo.name)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

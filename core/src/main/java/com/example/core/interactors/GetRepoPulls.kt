@@ -4,5 +4,5 @@ import com.example.core.data.PullRepository
 import com.example.core.domain.Repo
 
 class GetRepoPulls(private val pullRepository: PullRepository) {
-    suspend operator fun invoke(repo: Repo)=pullRepository.getRepoPulls(repo)
+    operator fun invoke(repo: Repo)=pullRepository.getRepoPulls(repo)
 }

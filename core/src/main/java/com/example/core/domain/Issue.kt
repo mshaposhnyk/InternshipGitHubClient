@@ -1,5 +1,7 @@
 package com.example.core.domain
 
+import java.io.Serializable
+
 data class Issue(
     val number: Int,
     val state: IssueState,
@@ -9,4 +11,4 @@ data class Issue(
     val assignee: User,
     val assignees: List<User>,
     val commentsCount: Int
-)
+) : Serializable

@@ -5,5 +5,5 @@ import com.example.core.domain.Repo
 import io.reactivex.Single
 
 class PullRepository (private val dataSource: PullDataSource) {
-    suspend fun getRepoPulls(repo: Repo): Single<List<Pull>> = dataSource.getAll(repo)
+    fun getRepoPulls(repo: Repo): Single<List<Pull>> = dataSource.getAll(repo)
 }

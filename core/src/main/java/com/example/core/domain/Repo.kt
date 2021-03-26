@@ -1,5 +1,7 @@
 package com.example.core.domain
 
+import java.io.Serializable
+
 data class Repo(
     val description: String,
     val forks: Int,
@@ -9,4 +11,4 @@ data class Repo(
     val owner: User,
     val stargazersCount: Int,
     val watchersCount: Int
-)
+) : Serializable

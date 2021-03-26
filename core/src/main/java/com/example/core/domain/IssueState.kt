@@ -1,6 +1,8 @@
 package com.example.core.domain
 
-enum class IssueState {
+import java.io.Serializable
+
+enum class IssueState : Serializable {
     CLOSED, OPEN, ALL;
 
     override fun toString(): String = when (this) {

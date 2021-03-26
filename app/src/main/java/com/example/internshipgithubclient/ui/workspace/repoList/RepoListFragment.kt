@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.databinding.FragmentRepoListBinding
-import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
@@ -72,7 +73,7 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         compositeDisposable.dispose()
     }
 
-    override fun onClick(v: View?, item: RepoNetworkEntity) {
+    override fun onClick(v: View?, item: Repo) {
         view?.findNavController()
             ?.navigate(RepoListFragmentDirections.actionRepoListFragmentToRepoDetailsFragment(item))
     }
