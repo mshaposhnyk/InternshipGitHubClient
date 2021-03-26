@@ -1,22 +1,18 @@
 package com.example.internshipgithubclient.ui.workspace.repoWatchers
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.domain.Repo
+import com.example.core.domain.User
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
-import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
-import com.example.internshipgithubclient.network.user.UserNetworkEntity
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClickListener {
@@ -47,12 +43,12 @@ class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClic
         binding.itemsList.layoutManager = LinearLayoutManager(context)
         //Set default text for textview if nobody watching repositoty
         binding.listEmptyText.text = getString(R.string.no_watchers)
-        val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
+        val repo: Repo? = arguments?.getSerializable("choosedRepo") as Repo?
         //if repo is not null then fetch for watchers list
         repo?.let {
             viewModel.fetchWatchers(it)
         }
-        val subscription: Disposable = viewModel.isDataLoaded.subscribe({
+        val disposable = viewModel.isDataLoaded.subscribe({
             if (it) {
                 //turn off textview
                 binding.listEmptyText.visibility = View.GONE
@@ -64,10 +60,10 @@ class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClic
         }, {
             Log.e(RepoWatchersFragment::class.java.simpleName, "Error occurred" + it.message)
         })
-        compositeDisposable.add(subscription)
+        compositeDisposable.add(disposable)
     }
 
-    override fun onClick(v: View?, item: UserNetworkEntity) {}
+    override fun onClick(v: View?, item: User) {}
 
     override fun onDestroy() {
         super.onDestroy()
