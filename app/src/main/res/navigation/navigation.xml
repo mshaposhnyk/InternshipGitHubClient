@@ -43,7 +43,7 @@
         android:label="@string/issues">
         <argument
             android:name="choosedRepo"
-            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+            app:argType="com.example.core.domain.Repo" />
     </fragment>
     <fragment
         android:id="@+id/repoWatchersFragment"
@@ -51,14 +51,14 @@
         android:label="@string/watchers">
         <argument
             android:name="choosedRepo"
-            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+            app:argType="com.example.core.domain.Repo" />
     </fragment>
     <fragment
         android:id="@+id/repoPullsFragment"
         android:name="com.example.internshipgithubclient.ui.workspace.repoPulls.RepoPullsFragment"
         android:label="@string/pull_requests">
         <argument
-            android:name="repoPulls"
-            app:argType="com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity[]" />
+            android:name="choosedRepo"
+            app:argType="com.example.core.domain.Repo" />
     </fragment>
 </navigation>

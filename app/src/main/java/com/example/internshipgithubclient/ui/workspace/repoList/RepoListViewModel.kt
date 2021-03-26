@@ -22,7 +22,7 @@ class RepoListViewModel @Inject constructor(
     private val compositeDisposable = CompositeDisposable()
 
     fun eventGotUser() {
-        val subscription: Disposable = getUser.invoke()
+        val disposable = getUser.invoke()
             .subscribe(
                 {
                     if (it != null)
@@ -34,12 +34,12 @@ class RepoListViewModel @Inject constructor(
                         "Error occurred" + it.message
                     )
                 })
-        compositeDisposable.add(subscription)
+        compositeDisposable.add(disposable)
     }
 
     fun fetchUserRepos() {
         //Fetching data with RX
-        val subscription: Disposable = getAllUserRepos.invoke(userEntity)
+        val subscription = getAllUserRepos.invoke(userEntity)
             .subscribe(
                 {
                     if (it != null)
