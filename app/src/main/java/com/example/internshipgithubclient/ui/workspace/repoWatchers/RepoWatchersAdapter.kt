@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.domain.User
 import com.example.internshipgithubclient.databinding.ListItemGenericBinding
-import com.example.internshipgithubclient.network.user.UserNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
 
 class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     RecyclerView.Adapter<RepoWatchersAdapter.ViewHolder>() {
 
     //List of Watchers
-    var data = listOf<UserNetworkEntity>()
+    var data = listOf<User>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -28,9 +28,9 @@ class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     class ViewHolder(
         val binding: ListItemGenericBinding, private val listener: OnWatcherClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        lateinit var item: UserNetworkEntity
+        lateinit var item: User
 
-        fun bind(item: UserNetworkEntity) {
+        fun bind(item: User) {
             this.item = item
             binding.primaryText.text = item.login
             binding.secondaryText.text = item.name
@@ -52,6 +52,6 @@ class RepoWatchersAdapter(private val listener: OnWatcherClickListener) :
     }
 
     interface OnWatcherClickListener {
-        fun onClick(v: View?, item: UserNetworkEntity)
+        fun onClick(v: View?, item: User)
     }
 }
