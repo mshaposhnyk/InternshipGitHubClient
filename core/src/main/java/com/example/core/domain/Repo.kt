@@ -3,6 +3,8 @@ package com.example.core.domain
 import java.io.Serializable
 
 data class Repo(
+    val id: Int,
+    val url: String,
     val description: String,
     val forks: Int,
     val forksCount: Int,

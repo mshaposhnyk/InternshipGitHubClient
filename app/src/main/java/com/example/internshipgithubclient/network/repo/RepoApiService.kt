@@ -1,6 +1,6 @@
 package com.example.internshipgithubclient.network.repo
 
-import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
+import com.example.internshipgithubclient.network.pull.PullNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
 import io.reactivex.Single
 import retrofit2.Call
