@@ -8,6 +8,6 @@ class Pull(
     val title: String,
     val body: String,
     val user: User,
-    val assignee: User,
+    val assignee: User?,
     val assignees: List<User>
 ) : Serializable

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentWtabsGenericBinding
 import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
@@ -47,11 +48,10 @@ class RepoPullsFragment : DaggerFragment() {
                 1 -> tab.text = getString(R.string.closed)
             }
         }.attach()
-        val pullsList =
-            (arguments?.getParcelableArray("repoPulls") as Array<PullNetworkEntity>).toList()
-        //if map of pull requests is not null then set it in viewmodel
-        pullsList.let {
-            viewModel.setPulls(it)
+        val repo = arguments?.getSerializable("choosedRepo") as Repo?
+        //if repo is not null then set fetch pulls
+        repo?.let {
+            viewModel.fetchPulls(it)
         }
     }
 }

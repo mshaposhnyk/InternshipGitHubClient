@@ -22,7 +22,7 @@ data class PullNetworkEntity(
     @SerializedName("milestone")
     val milestone:MilestoneNetworkEntity,
     @SerializedName("assignee")
-    val assignee:UserNetworkEntity,
+    val assignee:UserNetworkEntity?,
     @SerializedName("assignees")
     val assignees:List<UserNetworkEntity>
 ) : Parcelable
