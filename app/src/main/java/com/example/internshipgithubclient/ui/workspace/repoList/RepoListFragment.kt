@@ -44,10 +44,14 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         binding.repoList.layoutManager = LinearLayoutManager(context)
         binding.repoList.adapter = adapter
         //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
-        viewModel.eventGotUser()
+        runBlocking {
+            viewModel.eventGotUser()
+        }
         val subscrUser = viewModel.isUserDataLoaded.subscribe({
             if (it) {
-                viewModel.fetchUserRepos()
+                runBlocking {
+                    viewModel.fetchUserRepos()
+                }
             }
         }, {
             Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
@@ -62,7 +66,9 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
             Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
         })
         binding.root.setOnRefreshListener {
-            viewModel.fetchUserRepos()
+            runBlocking {
+                viewModel.fetchUserRepos()
+            }
         }
         compositeDisposable.add(subscrUser)
         compositeDisposable.add(subscrRepo)
