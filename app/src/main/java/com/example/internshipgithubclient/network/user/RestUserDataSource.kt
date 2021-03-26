@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RestUserDataSource(val userApiService: UserApiService) : UserDataSource {
-    override suspend fun get(): Single<User> {
+    override fun get(): Single<User> {
         return userApiService.getAuthenticatedUser()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

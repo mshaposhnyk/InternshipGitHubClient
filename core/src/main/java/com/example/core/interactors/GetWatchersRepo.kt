@@ -4,5 +4,5 @@ import com.example.core.data.RepoRepository
 import com.example.core.domain.Repo
 
 class GetWatchersRepo(private val repoRepository: RepoRepository) {
-    suspend operator fun invoke(repo: Repo) = repoRepository.getWatchersRepo(repo)
+    operator fun invoke(repo: Repo) = repoRepository.getWatchersRepo(repo)
 }

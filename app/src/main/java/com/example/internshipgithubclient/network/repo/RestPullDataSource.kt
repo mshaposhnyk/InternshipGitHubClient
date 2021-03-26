@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RestPullDataSource(val repoApiService: RepoApiService) : PullDataSource {
-    override suspend fun getAll(repo: Repo): Single<List<Pull>> {
+    override fun getAll(repo: Repo): Single<List<Pull>> {
         return repoApiService.getPullsForRepo(repo.owner.login, repo.name)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
