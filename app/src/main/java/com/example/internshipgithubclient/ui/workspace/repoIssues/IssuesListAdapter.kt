@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.domain.Issue
+import com.example.core.domain.IssueState
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.ListItemWcommentBinding
-import com.example.internshipgithubclient.network.STATE_CLOSED
-import com.example.internshipgithubclient.network.STATE_OPEN
-import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
+
 
 class IssuesListAdapter(private val listener: OnIssueClickListener) :
     RecyclerView.Adapter<IssuesListAdapter.ViewHolder>() {
     //List of Issues
-    var data = listOf<IssueNetworkEntity>()
+    var data = listOf<Issue>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -31,19 +31,19 @@ class IssuesListAdapter(private val listener: OnIssueClickListener) :
     class ViewHolder private constructor(
         val binding: ListItemWcommentBinding, private val listener: OnIssueClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        lateinit var item: IssueNetworkEntity
+        lateinit var item: Issue
 
-        fun bind(item: IssueNetworkEntity) {
+        fun bind(item: Issue) {
             this.item = item
             binding.primaryText.text = item.title
             binding.secondaryText.text = item.body
             val issueImage = when (item.state) {
-                STATE_OPEN -> ResourcesCompat.getDrawable(
+                IssueState.OPEN -> ResourcesCompat.getDrawable(
                     itemView.resources,
                     R.drawable.ic_issue_opened,
                     itemView.context.theme
                 )
-                STATE_CLOSED -> ResourcesCompat.getDrawable(
+                IssueState.CLOSED -> ResourcesCompat.getDrawable(
                     itemView.resources,
                     R.drawable.ic_issue_closed,
                     itemView.context.theme
@@ -55,8 +55,8 @@ class IssuesListAdapter(private val listener: OnIssueClickListener) :
                 )
             }
             val issueIconTint = when (item.state) {
-                STATE_OPEN -> Color.GREEN
-                STATE_CLOSED -> Color.RED
+                IssueState.OPEN -> Color.GREEN
+                IssueState.CLOSED -> Color.RED
                 else -> Color.RED + Color.YELLOW
             }
             binding.listIcon.setImageDrawable(issueImage)
@@ -79,6 +79,6 @@ class IssuesListAdapter(private val listener: OnIssueClickListener) :
     }
 
     interface OnIssueClickListener {
-        fun onClick(v: View?, item: IssueNetworkEntity)
+        fun onClick(v: View?, item: Issue)
     }
 }

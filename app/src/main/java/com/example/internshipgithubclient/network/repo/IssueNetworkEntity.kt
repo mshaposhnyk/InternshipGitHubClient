@@ -20,7 +20,7 @@ data class IssueNetworkEntity(
     @SerializedName("user")
     val user:UserNetworkEntity,
     @SerializedName("assignee")
-    val assignee:UserNetworkEntity,
+    val assignee:UserNetworkEntity?,
     @SerializedName("assignees")
     val assignees: List<UserNetworkEntity>,
     @SerializedName("comments")
