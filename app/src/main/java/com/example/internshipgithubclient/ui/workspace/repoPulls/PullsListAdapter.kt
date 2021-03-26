@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.domain.IssueState
+import com.example.core.domain.Pull
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.ListItemWcommentBinding
-import com.example.internshipgithubclient.network.STATE_CLOSED
-import com.example.internshipgithubclient.network.STATE_OPEN
-import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 
 class PullsListAdapter(private val listener: OnPullClickListener) :
     RecyclerView.Adapter<PullsListAdapter.ViewHolder>() {
     //List of Pulls
-    var data = listOf<PullNetworkEntity>()
+    var data = listOf<Pull>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -34,9 +33,9 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
         private val listener: OnPullClickListener
     ) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        lateinit var item: PullNetworkEntity
+        lateinit var item: Pull
 
-        fun bind(item: PullNetworkEntity) {
+        fun bind(item: Pull) {
             this.item = item
             //Pull request title
             binding.primaryText.text = item.title
@@ -44,12 +43,12 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
             binding.secondaryText.text =
                 itemView.resources.getString(R.string.repoNumber, item.number)
             val issueImage = when (item.state) {
-                STATE_OPEN -> ResourcesCompat.getDrawable(
+                IssueState.OPEN -> ResourcesCompat.getDrawable(
                     itemView.resources,
                     R.drawable.ic_pull_request,
                     itemView.context.theme
                 )
-                STATE_CLOSED -> ResourcesCompat.getDrawable(
+                IssueState.CLOSED -> ResourcesCompat.getDrawable(
                     itemView.resources,
                     R.drawable.ic_pull_request,
                     itemView.context.theme
@@ -61,8 +60,8 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
                 )
             }
             val issueIconTint = when (item.state) {
-                STATE_OPEN -> Color.GREEN
-                STATE_CLOSED -> Color.RED
+                IssueState.OPEN -> Color.GREEN
+                IssueState.CLOSED -> Color.RED
                 else -> Color.MAGENTA
             }
             binding.listIcon.setImageDrawable(issueImage)
@@ -88,6 +87,6 @@ class PullsListAdapter(private val listener: OnPullClickListener) :
     }
 
     interface OnPullClickListener {
-        fun onClick(v: View?, item: PullNetworkEntity)
+        fun onClick(v: View?, item: Pull)
     }
 }
