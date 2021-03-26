@@ -52,13 +52,16 @@ fun String.toIssueState():IssueState{
 }
 
 fun IssueNetworkEntity.toDomain():Issue{
+    var assignee: User? = null
+    if(this.assignee!=null)
+        assignee = this.assignee.toDomain()
     return Issue(
         this.number,
         this.state.toIssueState(),
         this.title,
         this.body,
         this.user.toDomain(),
-        this.assignee.toDomain(),
+        assignee,
         this.assignees.toDomain(),
         this.commentsCount
     )

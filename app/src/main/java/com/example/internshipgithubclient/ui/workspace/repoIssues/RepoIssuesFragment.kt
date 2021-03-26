@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentWtabsGenericBinding
-import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -53,10 +53,10 @@ class RepoIssuesFragment : DaggerFragment() {
                 1 -> tab.text = getString(R.string.closed)
             }
         }.attach()
-        val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
+        val repo: Repo? = arguments?.getSerializable("choosedRepo") as Repo?
         //If repo is not null then ask viewmodel for fetching pull issues map
         repo?.let {
-            viewModel.fetchIssues(it)
+            viewModel.fetchIssues(repo)
         }
     }
 }

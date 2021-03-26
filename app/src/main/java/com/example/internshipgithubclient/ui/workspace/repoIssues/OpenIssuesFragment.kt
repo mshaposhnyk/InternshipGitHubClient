@@ -7,13 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.domain.Issue
+import com.example.core.domain.IssueState
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
-import com.example.internshipgithubclient.network.STATE_OPEN
-import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class OpenIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickListener {
@@ -43,10 +42,10 @@ class OpenIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickListe
         openList.adapter = openListAdapter
         openList.layoutManager = LinearLayoutManager(context)
         listEmptytext.text = getString(R.string.no_issues)
-        val subscription: Disposable = viewModel.isDataLoaded.subscribe({
+        val disposable = viewModel.isDataLoaded.subscribe({
             //if issues are present then turn off textview and turn on recyclerview
             if (it) {
-                val openIssues = viewModel.issues.filter { issue -> issue.state == STATE_OPEN }
+                val openIssues = viewModel.issues.filter { issue -> issue.state == IssueState.OPEN }
                 //if issuesList not empty then
                 if (openIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
@@ -58,11 +57,11 @@ class OpenIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickListe
         }, {
             Log.e(OpenIssuesFragment::class.java.simpleName, "Error occurred" + it.message)
         })
-        compositeDisposable.add(subscription)
+        compositeDisposable.add(disposable)
         return binding.root
     }
 
-    override fun onClick(v: View?, item: IssueNetworkEntity) {
+    override fun onClick(v: View?, item: Issue) {
 
     }
 
