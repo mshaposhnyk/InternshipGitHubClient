@@ -8,15 +8,16 @@ import com.example.internshipgithubclient.network.user.UserNetworkEntity
 
 fun UserNetworkEntity.toDomain(): User {
     return User(
-        this.bio,
-        this.company,
-        this.email,
+        this.avatarUrl,
+        this.bio ?: "",
+        this.company ?: "",
+        this.email ?: "",
         this.followers,
         this.following,
         this.gistsUrl,
-        this.location,
+        this.location ?: "",
         this.login,
-        this.name,
+        this.name ?: "",
         this.publicGists,
         this.publicRepos
     )
@@ -30,7 +31,7 @@ fun List<UserNetworkEntity>.toDomain():List<User>{
 
 fun RepoNetworkEntity.toDomain(): Repo {
     return Repo(
-        this.description,
+        this.description ?: "",
         this.forks,
         this.forksCount,
         this.fullName,

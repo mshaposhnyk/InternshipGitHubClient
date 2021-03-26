@@ -20,7 +20,7 @@
         android:label="@string/repo_details">
         <argument
             android:name="choosedRepo"
-            app:argType="com.example.internshipgithubclient.network.repo.RepoNetworkEntity" />
+            app:argType="com.example.core.domain.Repo" />
         <action
             android:id="@+id/action_repoDetailsFragment_to_repoIssuesFragment"
             app:destination="@id/repoIssuesFragment"

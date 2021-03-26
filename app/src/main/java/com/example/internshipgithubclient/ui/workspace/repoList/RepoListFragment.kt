@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.databinding.FragmentRepoListBinding
-import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
@@ -43,10 +44,14 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         binding.repoList.layoutManager = LinearLayoutManager(context)
         binding.repoList.adapter = adapter
         //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
-        viewModel.eventGotUser()
+        runBlocking {
+            viewModel.eventGotUser()
+        }
         val subscrUser = viewModel.isUserDataLoaded.subscribe({
             if (it) {
-                viewModel.fetchUserRepos()
+                runBlocking {
+                    viewModel.fetchUserRepos()
+                }
             }
         }, {
             Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
@@ -61,7 +66,9 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
             Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
         })
         binding.root.setOnRefreshListener {
-            viewModel.fetchUserRepos()
+            runBlocking {
+                viewModel.fetchUserRepos()
+            }
         }
         compositeDisposable.add(subscrUser)
         compositeDisposable.add(subscrRepo)
@@ -72,7 +79,7 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         compositeDisposable.dispose()
     }
 
-    override fun onClick(v: View?, item: RepoNetworkEntity) {
+    override fun onClick(v: View?, item: Repo) {
         view?.findNavController()
             ?.navigate(RepoListFragmentDirections.actionRepoListFragmentToRepoDetailsFragment(item))
     }
