@@ -10,5 +10,6 @@ data class Repo(
     val name: String,
     val owner: User,
     val stargazersCount: Int,
+    val openIssuesCount: Int,
     val watchersCount: Int
 ) : Serializable

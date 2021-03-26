@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.example.core.domain.IssueState
+import com.example.core.domain.Repo
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentRepoDetailsBinding
-import com.example.internshipgithubclient.network.STATE_OPEN
-import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.ui.loadCircleImage
 import dagger.android.support.DaggerFragment
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class RepoDetailsFragment : DaggerFragment() {
@@ -23,7 +25,7 @@ class RepoDetailsFragment : DaggerFragment() {
             .get(RepoDetailsViewModel::class.java)
     }
     private lateinit var binding: FragmentRepoDetailsBinding
-
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,10 +39,9 @@ class RepoDetailsFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //getting choosed repo from arguments
-        val repo: RepoNetworkEntity? = arguments?.getParcelable("choosedRepo")
-        //if repo is not null then set data in ui
+        val repo: Repo? = arguments?.getSerializable("choosedRepo") as Repo?
+        //load circle avatar of user who owns this repo
         repo?.let {
-            //load circle avatar of user who owns this repo
             loadCircleImage(binding.root.context, repo.owner.avatarUrl, binding.userIcon)
             binding.authorName.text = repo.owner.login
             binding.repoName.text = repo.name
@@ -76,23 +77,30 @@ class RepoDetailsFragment : DaggerFragment() {
                 binding.root.findNavController()
                     .navigate(
                         RepoDetailsFragmentDirections.actionRepoDetailsFragmentToRepoPullsFragment(
-                            viewModel.pulls.toTypedArray()
+                            repo
                         )
                     )
             }
             //Ask view models for pull requests
-            viewModel.fetchPulls(it)
-            viewModel.isDataLoaded.subscribe({
+            viewModel.fetchPulls(repo)
+            val disposable = viewModel.isDataLoaded.subscribe({
                 //if loading of pulls completed then
                 if (it && viewModel.pulls.isNotEmpty()) {
                     //set count of open pull requests
                     binding.prequestsCounter.text =
-                        viewModel.pulls.filter { pull -> pull.state == STATE_OPEN }.size.toString()
+                        viewModel.pulls.filter { pull -> pull.state == IssueState.OPEN }.size.toString()
                     //navigate to Pulls fragment
                 }
             }, {
                 Log.e(RepoDetailsFragment::class.java.simpleName, "Error occurred" + it.message)
             })
+            compositeDisposable.add(disposable)
         }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

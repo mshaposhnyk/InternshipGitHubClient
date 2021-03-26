@@ -38,6 +38,7 @@ fun RepoNetworkEntity.toDomain(): Repo {
         this.name,
         this.owner.toDomain(),
         this.stargazersCount,
+        this.openIssuesCount,
         this.watchersCount
     )
 }
