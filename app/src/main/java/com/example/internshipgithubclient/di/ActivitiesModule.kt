@@ -12,6 +12,9 @@ interface ActivitiesModule {
     fun provideLoginActivity(): LoginActivity
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [WorkspaceModule::class, ViewModelModule::class])
+    @ContributesAndroidInjector(modules = [WorkspaceModule::class,
+                                            DataSourcesModule::class,
+                                            RepositoriesModule::class,
+                                            InteractionsModule::class])
     fun provideWorkSpaceActivity(): UserWorkSpaceActivity
 }
