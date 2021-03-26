@@ -21,7 +21,7 @@ class RepoListViewModel @Inject constructor(
     private lateinit var userEntity: User
     private val compositeDisposable = CompositeDisposable()
 
-    suspend fun eventGotUser() {
+    fun eventGotUser() {
         val subscription: Disposable = getUser.invoke()
             .subscribe(
                 {
@@ -37,7 +37,7 @@ class RepoListViewModel @Inject constructor(
         compositeDisposable.add(subscription)
     }
 
-    suspend fun fetchUserRepos() {
+    fun fetchUserRepos() {
         //Fetching data with RX
         val subscription: Disposable = getAllUserRepos.invoke(userEntity)
             .subscribe(
