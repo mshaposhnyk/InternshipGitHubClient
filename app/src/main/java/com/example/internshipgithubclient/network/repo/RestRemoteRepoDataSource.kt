@@ -1,6 +1,6 @@
 package com.example.internshipgithubclient.network.repo
 
-import com.example.core.data.RepoDataSource
+import com.example.core.data.RemoteRepoDataSource
 import com.example.core.domain.Repo
 import com.example.core.domain.User
 import com.example.internshipgithubclient.network.toDomain
@@ -8,7 +8,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class RestRepoDataSource(val repoApiService: RepoApiService) : RepoDataSource {
+class RestRemoteRepoDataSource(val repoApiService: RepoApiService) : RemoteRepoDataSource {
     override fun getAll(user: User): Single<List<Repo>> {
         return repoApiService.getUserRepos(user.login)
             .subscribeOn(Schedulers.io())

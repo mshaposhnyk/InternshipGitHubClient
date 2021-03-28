@@ -1,17 +1,16 @@
-package com.example.internshipgithubclient.db.issue
+package com.example.internshipgithubclient.db.repo
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.example.internshipgithubclient.db.pull.PullRoomEntity
 import com.example.internshipgithubclient.db.user.UserRoomEntity
 
 @Entity(
-    primaryKeys = ["issueId", "userId"],
+    primaryKeys = ["repoId", "userId"],
     foreignKeys = [ForeignKey(
-        entity = IssueRoomEntity::class,
-        parentColumns = ["issueId"],
-        childColumns = ["issueId"],
+        entity = RepoRoomEntity::class,
+        parentColumns = ["repoId"],
+        childColumns = ["repoId"],
         onDelete = ForeignKey.CASCADE
     ), ForeignKey(
         entity = UserRoomEntity::class,
@@ -19,9 +18,9 @@ import com.example.internshipgithubclient.db.user.UserRoomEntity
         childColumns = ["userId"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("issueId"),Index("userId")]
+    indices = [Index("repoId"), Index("userId")]
 )
-data class IssuesUsersCrossRef(
-    val issueId: Int,
+data class ReposUsersCrossRef(
+    val repoId: Int,
     val userId: Int
 )

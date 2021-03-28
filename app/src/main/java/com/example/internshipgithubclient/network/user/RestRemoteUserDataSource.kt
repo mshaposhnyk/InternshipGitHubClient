@@ -1,13 +1,13 @@
 package com.example.internshipgithubclient.network.user
 
-import com.example.core.data.UserDataSource
+import com.example.core.data.RemoteUserDataSource
 import com.example.core.domain.User
 import com.example.internshipgithubclient.network.toDomain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class RestUserDataSource(val userApiService: UserApiService) : UserDataSource {
+class RestRemoteUserDataSource(val userApiService: UserApiService) : RemoteUserDataSource {
     override fun get(): Single<User> {
         return userApiService.getAuthenticatedUser()
             .subscribeOn(Schedulers.io())

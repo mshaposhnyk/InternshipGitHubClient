@@ -27,6 +27,6 @@ data class IssueRoomEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "body") val body: String,
     @ColumnInfo(index = true) val userId: Int,
-    @ColumnInfo(index = true) val assigneeId: Int,
+    @ColumnInfo(index = true) val assigneeId: Int?,
     @ColumnInfo(name = "commentsCount") val commentsCount: Int
 )

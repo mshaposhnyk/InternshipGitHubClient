@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user")
 data class UserRoomEntity(
     @PrimaryKey val userId: Int,
-    @ColumnInfo(name = "isCurrentUser") val isCurrentUser:Boolean,
+    @ColumnInfo(name = "isCurrentUser") var isCurrentUser:Boolean,
     @ColumnInfo(name = "avatarUrl") val avatarUrl: String,
     @ColumnInfo(name = "bio") val bio: String,
     @ColumnInfo(name = "company") val company: String,

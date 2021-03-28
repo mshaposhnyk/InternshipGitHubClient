@@ -1,16 +1,16 @@
-package com.example.internshipgithubclient.db.pull
+package com.example.internshipgithubclient.db.repo
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.example.internshipgithubclient.db.user.UserRoomEntity
 
-data class PullWithAssignees(
-    @Embedded val pullRoomEntity: PullRoomEntity,
+data class ReposWithWatchers(
+    @Embedded val repoRoomEntity: RepoRoomEntity,
     @Relation(
-        parentColumn = "pullId",
+        parentColumn = "repoId",
         entityColumn = "userId",
-        associateBy = Junction(PullsUsersCrossRef::class)
+        associateBy = Junction(ReposUsersCrossRef::class)
     )
     val userRoomEntities:List<UserRoomEntity>
 )

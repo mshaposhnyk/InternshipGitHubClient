@@ -10,6 +10,8 @@ import com.example.internshipgithubclient.db.pull.PullRoomEntity
 import com.example.internshipgithubclient.db.pull.PullsUsersCrossRef
 import com.example.internshipgithubclient.db.repo.RepoDao
 import com.example.internshipgithubclient.db.repo.RepoRoomEntity
+import com.example.internshipgithubclient.db.repo.ReposUsersCrossRef
+import com.example.internshipgithubclient.db.repo.ReposWithWatchers
 import com.example.internshipgithubclient.db.user.UserDao
 import com.example.internshipgithubclient.db.user.UserRoomEntity
 
@@ -18,6 +20,7 @@ import com.example.internshipgithubclient.db.user.UserRoomEntity
         RepoRoomEntity::class,
         PullRoomEntity::class,
         IssueRoomEntity::class,
+        ReposUsersCrossRef::class,
         IssuesUsersCrossRef::class,
         PullsUsersCrossRef::class],
     version = 1,
