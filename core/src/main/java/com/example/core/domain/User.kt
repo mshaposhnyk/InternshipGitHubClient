@@ -3,7 +3,8 @@ package com.example.core.domain
 import java.io.Serializable
 
 data class User(
-    val avatarUrl:String,
+    val id: Int,
+    val avatarUrl: String,
     val bio: String,
     val company: String,
     val email: String,
