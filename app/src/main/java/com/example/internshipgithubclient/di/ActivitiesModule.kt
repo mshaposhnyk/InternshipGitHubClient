@@ -13,7 +13,8 @@ interface ActivitiesModule {
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [WorkspaceModule::class,
-                                            DataSourcesModule::class,
+                                            LocalDataSourcesModule::class,
+                                            RemoteDataSourcesModule::class,
                                             RepositoriesModule::class,
                                             InteractionsModule::class])
     fun provideWorkSpaceActivity(): UserWorkSpaceActivity

@@ -14,6 +14,8 @@ import javax.inject.Singleton
         ActivitiesModule::class,
         RetrofitModule::class,
         NetworkModule::class,
+        DbModule::class,
+        DaoModule::class,
         ViewModelFactoryModule::class]
 )
 interface AppComponent : AndroidInjector<InternGitHubApp> {
