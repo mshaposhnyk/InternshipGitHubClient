@@ -4,6 +4,6 @@ import com.example.core.domain.Pull
 import com.example.core.domain.Repo
 import io.reactivex.Single
 
-interface PullDataSource {
+interface RemotePullDataSource {
     fun getAll(repo: Repo): Single<List<Pull>>
 }
