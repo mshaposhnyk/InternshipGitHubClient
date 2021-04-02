@@ -1,13 +1,14 @@
 package com.example.internshipgithubclient.network
 
 import com.example.core.domain.*
-import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
+import com.example.internshipgithubclient.network.pull.PullNetworkEntity
 import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
 import com.example.internshipgithubclient.network.repo.RepoNetworkEntity
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
 
 fun UserNetworkEntity.toDomain(): User {
     return User(
+        this.id,
         this.avatarUrl,
         this.bio ?: "",
         this.company ?: "",
@@ -31,6 +32,8 @@ fun List<UserNetworkEntity>.toDomain():List<User>{
 
 fun RepoNetworkEntity.toDomain(): Repo {
     return Repo(
+        this.id,
+        this.url,
         this.description ?: "",
         this.forks,
         this.forksCount,
@@ -56,6 +59,8 @@ fun IssueNetworkEntity.toDomain():Issue{
     if(this.assignee!=null)
         assignee = this.assignee.toDomain()
     return Issue(
+        this.repo_url,
+        this.id,
         this.number,
         this.state.toIssueState(),
         this.title,
@@ -72,7 +77,9 @@ fun PullNetworkEntity.toDomain():Pull{
     if (this.assignee != null)
         assignee = this.assignee.toDomain()
     return Pull(
+        this.id,
         this.number,
+        this.head.repo.url,
         this.state.toIssueState(),
         this.title,
         this.body,

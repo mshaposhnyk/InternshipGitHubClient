@@ -1,4 +1,4 @@
-package com.example.internshipgithubclient.network.pullRequest
+package com.example.internshipgithubclient.network.pull
 
 import android.os.Parcelable
 import com.example.internshipgithubclient.network.user.UserNetworkEntity
@@ -9,6 +9,8 @@ import kotlinx.android.parcel.Parcelize
 data class PullNetworkEntity(
     @SerializedName("id")
     val id: Int,
+    @SerializedName("head")
+    val head: HeadNetworkEntity,
     @SerializedName("number")
     val number:Int,
     @SerializedName("state")

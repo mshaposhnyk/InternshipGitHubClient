@@ -1,4 +1,4 @@
-package com.example.internshipgithubclient.network.pullRequest
+package com.example.internshipgithubclient.network.pull
 
 import android.os.Parcelable
 import com.example.internshipgithubclient.network.user.UserNetworkEntity

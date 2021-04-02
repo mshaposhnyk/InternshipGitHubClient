@@ -7,6 +7,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RepoNetworkEntity(
+    @SerializedName("url")
+    val url: String,
     @SerializedName("archived")
     val archived: Boolean,
     @SerializedName("created_at")
@@ -20,7 +22,7 @@ data class RepoNetworkEntity(
     @SerializedName("fork")
     val fork: Boolean,
     @SerializedName("forks")
-    val forks:Int,
+    val forks: Int,
     @SerializedName("forks_count")
     val forksCount: Int,
     @SerializedName("full_name")
