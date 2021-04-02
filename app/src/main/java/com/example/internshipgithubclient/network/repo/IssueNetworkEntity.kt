@@ -7,20 +7,22 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class IssueNetworkEntity(
+    @SerializedName("repository_url")
+    val repo_url: String,
     @SerializedName("id")
     val id: Int,
     @SerializedName("number")
-    val number:Int,
+    val number: Int,
     @SerializedName("state")
-    val state:String,
+    val state: String,
     @SerializedName("title")
-    val title:String,
+    val title: String,
     @SerializedName("body")
-    val body:String,
+    val body: String,
     @SerializedName("user")
-    val user:UserNetworkEntity,
+    val user: UserNetworkEntity,
     @SerializedName("assignee")
-    val assignee:UserNetworkEntity?,
+    val assignee: UserNetworkEntity?,
     @SerializedName("assignees")
     val assignees: List<UserNetworkEntity>,
     @SerializedName("comments")
