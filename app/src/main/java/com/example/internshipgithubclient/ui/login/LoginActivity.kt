@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.ActivityLoginBinding
 import com.example.internshipgithubclient.ui.workspace.UserWorkSpaceActivity
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
@@ -36,9 +39,11 @@ class LoginActivity : DaggerAppCompatActivity() {
             val authIntent = loginViewModel.provideAuthIntent()
             startActivityForResult(authIntent, REQUEST_AUTH)
         }
-        loginViewModel.eventTokenExchanged.observe(this, {
-            moveToUserWorkSpaceActivity(it)
-        })
+        loginViewModel.eventTokenExchanged
+            .onEach {
+                moveToUserWorkSpaceActivity(it)
+            }
+            .launchIn(lifecycleScope)
     }
 
     private fun moveToUserWorkSpaceActivity(tokenExchanged: Boolean) {

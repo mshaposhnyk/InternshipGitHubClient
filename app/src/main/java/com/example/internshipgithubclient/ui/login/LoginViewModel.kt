@@ -4,16 +4,16 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.internshipgithubclient.network.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.*
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
-    private val _eventTokenExchanged = MutableLiveData<Boolean>()
-    val eventTokenExchanged: LiveData<Boolean>
+    private val _eventTokenExchanged = MutableStateFlow<Boolean>(false)
+    val eventTokenExchanged: StateFlow<Boolean>
         get() = _eventTokenExchanged
 
     //Auth request for creating OAuth login intent
