@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.domain.Issue
 import com.example.core.domain.IssueState
@@ -14,6 +15,8 @@ import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class ClosedIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickListener {
@@ -24,7 +27,6 @@ class ClosedIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickLis
         ViewModelProvider(this, viewModelFactory)
             .get(IssuesViewModel::class.java)
     }
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
 
@@ -47,10 +49,9 @@ class ClosedIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickLis
         binding.itemsList.layoutManager = LinearLayoutManager(context)
         //By default we showing textview that informing about empty issues list
         binding.listEmptyText.text = getString(R.string.no_issues)
-        val disposable = viewModel.isDataLoaded.subscribe({
-            //if issues are present then turn off textview and turn on recyclerview
-            if (it) {
-                val closedIssues = viewModel.issues.filter { issue -> issue.state != IssueState.OPEN }
+        viewModel.issues
+            .onEach {
+                val closedIssues = it.filter { issue -> issue.state != IssueState.OPEN }
                 //if issuesList not empty then
                 if (closedIssues.isNotEmpty()) {
                     //set issuesList to recyclerview adapter
@@ -59,14 +60,6 @@ class ClosedIssuesFragment : DaggerFragment(), IssuesListAdapter.OnIssueClickLis
                     binding.itemsList.visibility = View.VISIBLE
                 }
             }
-        }, {
-            Log.e(ClosedIssuesFragment::class.java.simpleName, "Error occurred" + it.message)
-        })
-        compositeDisposable.add(disposable)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
+            .launchIn(lifecycleScope)
     }
 }

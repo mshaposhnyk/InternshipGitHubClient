@@ -1,18 +1,21 @@
 package com.example.internshipgithubclient.ui.workspace.repoList
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.domain.Repo
+import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentRepoListBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
@@ -23,7 +26,6 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         ViewModelProvider(this, viewModelFactory)
             .get(RepoListViewModel::class.java)
     }
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var adapter: RepoListAdapter
     private lateinit var binding: FragmentRepoListBinding
 
@@ -43,39 +45,47 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         adapter = RepoListAdapter(this)
         binding.repoList.layoutManager = LinearLayoutManager(context)
         binding.repoList.adapter = adapter
-        //Observing eventUserUpdated flag. If the user data is loaded, then start loading list of repos
+        //Observing isUserLoadedFlag flag. If the user data is loaded, then start loading list of repos
         viewModel.eventGotUser()
-        val subscrUser = viewModel.isUserDataLoaded.subscribe({
-            if (it) {
-                viewModel.fetchUserRepos()
-            }
-        }, {
-            Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
-        })
-        val subscrRepo = viewModel.isRepoDataLoaded.subscribe({
-            if (it) {
-                adapter.data = viewModel.repoList
-                viewModel.isRepoDataLoaded.onNext(false)
+        viewModel.isUserLoadedState
+            .onEach { if (it) viewModel.fetchUserRepos() }
+            .launchIn(lifecycleScope)
+        //Observing state of repoList
+        viewModel.reposState
+            .filterNotNull()
+            .onEach {
+                adapter.data = it
                 binding.root.isRefreshing = false
             }
-        }, {
-            Log.e(RepoListFragment::class.java.simpleName, "Error occurred" + it.message)
-        })
+            .launchIn(lifecycleScope)
+        //Show snack if authorization failed
+        viewModel.isAuthErrorOccurred
+            .onEach {
+                if (it) showSnackbar(view, getString(R.string.auth_error_snack))
+            }
+            .launchIn(lifecycleScope)
+        //Show snack if fetching repos operation failed
+        viewModel.isReposLoadErrorOccurred
+            .onEach {
+                if (it) showSnackbar(view, getString(R.string.repo_load_error_snack))
+            }
+            .launchIn(lifecycleScope)
         binding.root.setOnRefreshListener {
             viewModel.fetchUserRepos()
         }
-        compositeDisposable.add(subscrUser)
-        compositeDisposable.add(subscrRepo)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
     }
 
     override fun onClick(v: View?, item: Repo) {
         view?.findNavController()
             ?.navigate(RepoListFragmentDirections.actionRepoListFragmentToRepoDetailsFragment(item))
+    }
+
+    private fun DaggerFragment.showSnackbar(view: View, msg: String) {
+        Snackbar.make(
+            view,
+            msg,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
 }
