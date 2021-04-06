@@ -5,11 +5,12 @@ import com.example.core.domain.Repo
 import com.example.core.domain.User
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 
 interface LocalPullDataSource {
-    fun addPull(pull: Pull): Completable
-    fun deletePull(pull: Pull): Completable
-    fun addPullUserCrossRef(pull: Pull, user: User): Completable
-    fun getRepoPulls(repo: Repo): Single<List<Pull>>
+    suspend fun addPull(pull: Pull)
+    suspend fun deletePull(pull: Pull)
+    suspend fun addPullUserCrossRef(pull: Pull, user: User)
+    suspend fun getRepoPulls(repo: Repo): Flow<Pull>
 }

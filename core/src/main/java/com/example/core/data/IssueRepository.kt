@@ -2,34 +2,26 @@ package com.example.core.data
 
 import com.example.core.domain.Issue
 import com.example.core.domain.Repo
-import io.reactivex.Observable
-import io.reactivex.Observable.just
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 
 class IssueRepository(
     private val dataSourceRemote: RemoteIssueDataSource,
     private val dataSourceLocal: LocalIssueDataSource,
     private val userDataSource: LocalUserDataSource
 ) {
-    fun getRepoIssues(repo: Repo): Single<List<Issue>> {
-        return dataSourceRemote.getRepoIssues(repo)
-            .flattenAsObservable { it }
-            .flatMap {
-                userDataSource.add(it.assignee)
-                    .andThen(dataSourceLocal.addIssue(it))
-                    .andThen(just(it))
-            }
-            .flatMapCompletable { issue ->
-                Observable.fromIterable(issue.assignees.filterNotNull())
-                    .flatMap {
+    suspend fun getRepoIssues(repo: Repo): Flow<Issue> {
+        dataSourceRemote.getRepoIssues(repo)
+            .onEach { issue ->
+                userDataSource.add(issue.assignee)
+                dataSourceLocal.addIssue(issue)
+                issue.assignees.filterNotNull()
+                    .forEach{
                         userDataSource.add(it)
-                            .andThen(just(it))
+                        dataSourceLocal.addIssueAssigneeCrossRef(issue,it)
                     }
-                    .flatMapCompletable { user ->
-                        dataSourceLocal.addIssueAssigneeCrossRef(issue,user)
-                    }
-            }
-            .andThen(dataSourceLocal.getRepoIssues(repo))
-            .onErrorResumeNext (dataSourceLocal.getRepoIssues(repo))
+            }.collect()
+        return dataSourceLocal.getRepoIssues(repo)
     }
 }
