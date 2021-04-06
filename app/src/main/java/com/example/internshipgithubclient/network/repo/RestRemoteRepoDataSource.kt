@@ -7,29 +7,28 @@ import com.example.internshipgithubclient.network.toDomain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
-class RestRemoteRepoDataSource(val repoApiService: RepoApiService) : RemoteRepoDataSource {
-    override fun getAllRepos(user: User): Single<List<Repo>> {
-        return repoApiService.getUserRepos(user.login)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { list -> Single.just(list.map { it.toDomain() }) }
-
-    }
-
-    override fun get(user: User, repoName: String): Single<Repo> {
-        return repoApiService.getRepo(user.login, repoName)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { Single.just(it.toDomain()) }
-    }
-
-    override fun getWatchers(repo: Repo): Single<List<User>> {
-        return repoApiService.getWatchersForRepo(repo.owner.login, repo.name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap {
-                Single.just(it.toDomain())
+class RestRemoteRepoDataSource(private val repoApiService: RepoApiService) : RemoteRepoDataSource {
+    override suspend fun getAllRepos(user: User): Flow<Repo> {
+        return repoApiService.getUserRepos(user.login).asFlow()
+            .map {
+                it.toDomain()
             }
+    }
+
+    override suspend fun get(user: User, repoName: String): Repo {
+        return repoApiService.getRepo(user.login, repoName).toDomain()
+    }
+
+    override suspend fun getWatchers(repo: Repo): Flow<User> {
+        return repoApiService.getWatchersForRepo(repo.owner.login, repo.name).asFlow()
+            .map {
+                it.toDomain()
+            }.flowOn(Dispatchers.IO)
     }
 }

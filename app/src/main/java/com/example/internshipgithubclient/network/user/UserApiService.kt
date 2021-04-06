@@ -9,7 +9,7 @@ interface UserApiService {
 
     //Returns currently authenticated user
     @GET("/user")
-    fun getAuthenticatedUser(): Single<UserNetworkEntity>
+    suspend fun getAuthenticatedUser(): UserNetworkEntity
 
     //Returns public info about specific user
     @GET("/users/{username}")
