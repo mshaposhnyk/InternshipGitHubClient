@@ -6,12 +6,7 @@ import com.example.core.domain.Issue
 import com.example.core.domain.Repo
 import com.example.core.interactors.GetRepoIssues
 import com.example.internshipgithubclient.di.FragmentScope
-import com.example.internshipgithubclient.network.repo.IssueNetworkEntity
-import com.example.internshipgithubclient.network.repo.RepoApiService
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 

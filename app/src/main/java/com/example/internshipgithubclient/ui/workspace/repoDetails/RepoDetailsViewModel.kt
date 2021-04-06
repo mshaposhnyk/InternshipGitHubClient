@@ -6,7 +6,6 @@ import com.example.core.domain.Pull
 import com.example.core.domain.Repo
 import com.example.core.interactors.GetRepoPulls
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 

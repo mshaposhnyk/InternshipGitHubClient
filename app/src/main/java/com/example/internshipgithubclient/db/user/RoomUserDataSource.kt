@@ -20,13 +20,13 @@ class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
             }.dispose()
         return userDao.deleteUser(user.fromDomain(isCurrentUser))
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun addAuthorized(user: User): Completable {
         return userDao.addUser(user.fromDomain(true))
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
 
@@ -44,20 +44,20 @@ class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
 
         return completable
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getById(id: Int): Single<User> {
         return userDao.getUserById(id)
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .map { it.toDomain() }
     }
 
     override fun getAuthorized(): Single<User> {
         return userDao.getAuthorizedUser()
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .map { it.toDomain() }
     }
 }

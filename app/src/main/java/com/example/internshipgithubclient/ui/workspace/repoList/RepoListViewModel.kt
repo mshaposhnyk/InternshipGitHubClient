@@ -7,7 +7,6 @@ import com.example.core.domain.User
 import com.example.core.interactors.GetAllUserRepos
 import com.example.core.interactors.GetUser
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 

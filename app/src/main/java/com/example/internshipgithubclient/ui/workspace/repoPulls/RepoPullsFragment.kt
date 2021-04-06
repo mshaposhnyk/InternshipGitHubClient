@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.core.domain.Repo
 import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.FragmentWtabsGenericBinding
-import com.example.internshipgithubclient.network.pullRequest.PullNetworkEntity
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
