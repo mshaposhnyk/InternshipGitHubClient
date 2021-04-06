@@ -13,16 +13,10 @@ class IssueRepository(
 ) {
     fun getRepoIssues(repo: Repo): Single<List<Issue>> {
         return dataSourceRemote.getRepoIssues(repo)
-            .toObservable()
+            .flattenAsObservable { it }
             .flatMap {
-                Observable.fromIterable(it)
-            }
-            .flatMap{
                 userDataSource.add(it.assignee)
-                    .andThen(just(it))
-            }
-            .flatMap {
-                dataSourceLocal.addIssue(it)
+                    .andThen(dataSourceLocal.addIssue(it))
                     .andThen(just(it))
             }
             .flatMapCompletable { issue ->
