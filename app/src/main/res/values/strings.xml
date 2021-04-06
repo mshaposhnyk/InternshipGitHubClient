@@ -26,4 +26,6 @@
     <string name="no_prequests">There aren\'t any pull requests</string>
     <string name="repo_list_title">Repositories</string>
     <string name="repo_details">Repository details</string>
+    <string name="auth_error_snack">Authorization error occurred. Check your internet connection.</string>
+    <string name="repo_load_error_snack">Repo load error occured. Check your internet connection</string>
 </resources>

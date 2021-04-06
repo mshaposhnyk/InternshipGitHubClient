@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.domain.Repo
 import com.example.core.domain.User
@@ -13,6 +14,8 @@ import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClickListener {
@@ -22,7 +25,6 @@ class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClic
         ViewModelProvider(this, viewModelFactory)
             .get(RepoWatchersViewModel::class.java)
     }
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: SimpleListTabBinding
 
     override fun onCreateView(
@@ -48,25 +50,17 @@ class RepoWatchersFragment : DaggerFragment(), RepoWatchersAdapter.OnWatcherClic
         repo?.let {
             viewModel.fetchWatchers(it)
         }
-        val disposable = viewModel.isDataLoaded.subscribe({
-            if (it) {
+        viewModel.listWatchers
+            .onEach {
                 //turn off textview
                 binding.listEmptyText.visibility = View.GONE
                 //turn on recyclerview
                 binding.itemsList.visibility = View.VISIBLE
-                val watchers = viewModel.listWatchers
-                watchListAdapter.data = watchers
+                watchListAdapter.data = it
             }
-        }, {
-            Log.e(RepoWatchersFragment::class.java.simpleName, "Error occurred" + it.message)
-        })
-        compositeDisposable.add(disposable)
+            .launchIn(lifecycleScope)
     }
 
     override fun onClick(v: View?, item: User) {}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
-    }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.core.domain.IssueState
 import com.example.core.domain.Repo
@@ -15,6 +16,8 @@ import com.example.internshipgithubclient.ui.loadCircleImage
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class RepoDetailsFragment : DaggerFragment() {
@@ -25,7 +28,6 @@ class RepoDetailsFragment : DaggerFragment() {
             .get(RepoDetailsViewModel::class.java)
     }
     private lateinit var binding: FragmentRepoDetailsBinding
-    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,24 +85,13 @@ class RepoDetailsFragment : DaggerFragment() {
             }
             //Ask view models for pull requests
             viewModel.fetchPulls(repo)
-            val disposable = viewModel.isDataLoaded.subscribe({
-                //if loading of pulls completed then
-                if (it && viewModel.pulls.isNotEmpty()) {
-                    //set count of open pull requests
+            viewModel.pulls
+                .onEach {
                     binding.prequestsCounter.text =
-                        viewModel.pulls.filter { pull -> pull.state == IssueState.OPEN }.size.toString()
-                    //navigate to Pulls fragment
+                        it.filter { pull -> pull.state == IssueState.OPEN }.size.toString()
                 }
-            }, {
-                Log.e(RepoDetailsFragment::class.java.simpleName, "Error occurred" + it.message)
-            })
-            compositeDisposable.add(disposable)
+                .launchIn(lifecycleScope)
         }
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.core.domain.IssueState
 import com.example.core.domain.Pull
@@ -13,6 +14,8 @@ import com.example.internshipgithubclient.R
 import com.example.internshipgithubclient.databinding.SimpleListTabBinding
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class OpenPullsFragment : DaggerFragment(), PullsListAdapter.OnPullClickListener {
@@ -45,10 +48,9 @@ class OpenPullsFragment : DaggerFragment(), PullsListAdapter.OnPullClickListener
         openList.layoutManager = LinearLayoutManager(context)
         //By default we showing textview that informing about empty pull requests list
         listEmptytext.text = getString(R.string.no_prequests)
-        val disposable = viewModel.isDataLoaded.subscribe({
-            //if pulls are present then turn off textview and turn on recyclerview
-            if (it) {
-                val openPulls = viewModel.pulls.filter { pull -> pull.state == IssueState.OPEN }
+        viewModel.pulls
+            .onEach {
+                val openPulls = it.filter { pull -> pull.state == IssueState.OPEN }
                 //if pullsList not null then
                 if (openPulls.isNotEmpty()) {
                     //set pullsList to recyclerview adapter
@@ -57,10 +59,7 @@ class OpenPullsFragment : DaggerFragment(), PullsListAdapter.OnPullClickListener
                     openList.visibility = View.VISIBLE
                 }
             }
-        }, {
-            Log.e(OpenPullsFragment::class.java.simpleName, "Error occured" + it.message)
-        })
-        compositeDisposable.add(disposable)
+            .launchIn(lifecycleScope)
     }
 
     override fun onClick(v: View?, item: Pull) {}
