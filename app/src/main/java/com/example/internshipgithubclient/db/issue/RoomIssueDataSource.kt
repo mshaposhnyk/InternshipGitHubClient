@@ -11,58 +11,38 @@ import com.example.internshipgithubclient.db.user.UserRoomEntity
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
 class RoomIssueDataSource(private val issueDao: IssueDao, private val userDao: UserDao) :
     LocalIssueDataSource {
-    override fun addIssue(issue: Issue): Completable {
+    override suspend fun addIssue(issue: Issue) {
         return issueDao.addIssue(issue.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun addIssueAssigneeCrossRef(issue: Issue, assignee: User): Completable {
+    override suspend fun addIssueAssigneeCrossRef(issue: Issue, assignee: User) {
         return issueDao.addIssueAssigneeCrossRef(IssuesUsersCrossRef(issue.id, assignee.id))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
 
-    override fun deleteIssue(issue: Issue): Completable {
+    override suspend fun deleteIssue(issue: Issue) {
         return issueDao.deleteIssue(issue.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun getRepoIssues(repo: Repo): Single<List<Issue>> {
-        return issueDao.getIssuesWithAssignees(repo.url)
-            .flattenAsObservable { it }
-            .flatMap { issue ->
-                userDao.getUserById(issue.issueRoomEntity.userId)
-                    .toObservable()
-                    .flatMap { user ->
-                        issue.issueRoomEntity.user = user
-                        Observable.just(issue)
-                    }
-            }
-            .flatMap { issue ->
-                if (issue.issueRoomEntity.assigneeId != null) {
-                    userDao.getUserById(issue.issueRoomEntity.assigneeId)
-                        .toObservable()
-                        .flatMap {
-                            issue.issueRoomEntity.assignee = it
-                            Observable.just(issue)
-                        }
+    override suspend fun getRepoIssues(repo: Repo): Flow<Issue> {
+        return issueDao.getIssuesWithAssignees(repo.url).asFlow()
+            .map { issue->
+                issue.issueRoomEntity.user = userDao.getUserById(issue.issueRoomEntity.userId)
+                issue.issueRoomEntity.assigneeId?.let {
+                    userDao.getUserById(issue.issueRoomEntity.userId)
                 }
-                Observable.just(issue)
+                issue.toDomain()
             }
-            .map{
-                it.toDomain()
-            }
-            .toList()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
 }
