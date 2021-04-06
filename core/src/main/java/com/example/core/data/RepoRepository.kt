@@ -2,6 +2,7 @@ package com.example.core.data
 
 import com.example.core.domain.Repo
 import com.example.core.domain.User
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class RepoRepository(
@@ -10,14 +11,17 @@ class RepoRepository(
 ) {
     fun getAllUserRepos(user: User): Single<List<Repo>> {
         return dataSourceRemote.getAllRepos(user)
-            .map { repoList ->
-                repoList.forEach {
-                    dataSourceLocal.addRepo(it)
-                        .andThen(dataSourceLocal.addRepoWatcher(it))
-                        .subscribe()
-                }
-                repoList
-            }.onErrorResumeNext { dataSourceLocal.getAll(user) }
+            .flatMap { repoList ->
+                Observable.just(repoList)
+                    .flatMapIterable { it }
+                    .flatMap {
+                        dataSourceLocal.addRepo(it)
+                            .andThen(dataSourceLocal.addRepoWatcher(it))
+                            .andThen(Observable.just(it))
+                    }
+                    .toList()
+            }
+            .onErrorResumeNext { dataSourceLocal.getAll(user) }
     }
 
     fun getDedicatedRepo(user: User, nameRepo: String): Single<Repo> =
@@ -25,8 +29,6 @@ class RepoRepository(
 
     fun getWatchersRepo(repo: Repo): Single<List<User>> =
         dataSourceRemote.getWatchers(repo).onErrorResumeNext {
-            dataSourceLocal.getWatchers(repo).doOnError {
-                val k = 1
-            }
+            dataSourceLocal.getWatchers(repo)
         }
 }

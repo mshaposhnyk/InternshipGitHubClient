@@ -12,16 +12,10 @@ class PullRepository(
 ) {
     fun getRepoPulls(repo: Repo): Single<List<Pull>> {
         return dataSourceRemote.getAll(repo)
-            .toObservable()
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+            .flattenAsObservable { it }
             .flatMap{
                 userDataSource.add(it.assignee)
-                    .andThen(Observable.just(it))
-            }
-            .flatMap {
-                dataSourceLocal.addPull(it)
+                    .andThen(dataSourceLocal.addPull(it))
                     .andThen(Observable.just(it))
             }
             .flatMapCompletable { pull ->
