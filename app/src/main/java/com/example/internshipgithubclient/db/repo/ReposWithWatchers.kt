@@ -12,5 +12,5 @@ data class ReposWithWatchers(
         entityColumn = "userId",
         associateBy = Junction(ReposUsersCrossRef::class)
     )
-    val userRoomEntities:List<UserRoomEntity>
+    val userRoomEntities: List<UserRoomEntity>
 )

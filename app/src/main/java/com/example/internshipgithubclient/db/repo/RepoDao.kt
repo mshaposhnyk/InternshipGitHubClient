@@ -3,28 +3,29 @@ package com.example.internshipgithubclient.db.repo
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addRepo(repo: RepoRoomEntity): Completable
+    suspend fun addRepo(repo: RepoRoomEntity)
 
     @Update
-    fun updateRepo(repo: RepoRoomEntity): Completable
+    suspend fun updateRepo(repo: RepoRoomEntity)
 
     @Query("SELECT * FROM repo where ownerId=:userId")
-    fun getAllUserRepos(userId: Int): Single<List<RepoRoomEntity>>
+    suspend fun getAllUserRepos(userId: Int): List<RepoRoomEntity>
 
     @Query("SELECT * FROM repo where ownerId=:userId and name=:repoName")
-    fun getDedicatedRepo(userId: Int, repoName: String): Single<RepoRoomEntity>
+    suspend fun getDedicatedRepo(userId: Int, repoName: String): RepoRoomEntity
 
     @Transaction
     @Query("SELECT * from repo WHERE repoId = :repoId")
-    fun getRepoWithWatchers(repoId: Int): Single<ReposWithWatchers>
+    suspend fun getRepoWithWatchers(repoId: Int): ReposWithWatchers
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addRepoWatcher(crossRef: ReposUsersCrossRef): Completable
+    suspend fun addRepoWatcher(crossRef: ReposUsersCrossRef)
 
     @Delete
-    fun deleteRepo(repo: RepoRoomEntity): Completable
+    suspend fun deleteRepo(repo: RepoRoomEntity)
 }
