@@ -2,7 +2,7 @@ package com.example.core.domain
 
 import java.io.Serializable
 
-class Pull(
+data class Pull(
     val id: Int,
     val number: Int,
     val repoUrl: String,

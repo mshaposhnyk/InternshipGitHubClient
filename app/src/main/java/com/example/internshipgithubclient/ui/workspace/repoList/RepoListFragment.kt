@@ -48,7 +48,7 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
         //Observing isUserLoadedFlag flag. If the user data is loaded, then start loading list of repos
         viewModel.eventGotUser()
         viewModel.isUserLoadedState
-            .onEach { if (it) viewModel.fetchUserRepos() }
+            .onEach { if (it) viewModel.fetchUserRepos(viewModel.userEntity) }
             .launchIn(lifecycleScope)
         //Observing state of repoList
         viewModel.reposState
@@ -71,7 +71,7 @@ class RepoListFragment : DaggerFragment(), RepoListAdapter.OnRepoClickListener {
             }
             .launchIn(lifecycleScope)
         binding.root.setOnRefreshListener {
-            viewModel.fetchUserRepos()
+            viewModel.fetchUserRepos(viewModel.userEntity)
         }
     }
 
