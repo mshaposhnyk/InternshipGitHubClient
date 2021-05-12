@@ -17,8 +17,8 @@ import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
 
 class LoginActivity : DaggerAppCompatActivity() {
-    private val REQUEST_AUTH: Int = 100
-    lateinit var binding: ActivityLoginBinding
+    private val REQUEST_AUTH: Int = 100//вынести в константу
+    lateinit var binding: ActivityLoginBinding//в онКриэйт
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory

@@ -7,8 +7,6 @@ import com.example.core.domain.Result
 import com.example.core.domain.User
 import com.example.core.interactors.GetAllUserRepos
 import com.example.core.interactors.GetUser
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,15 +27,16 @@ class RepoListViewModel @Inject constructor(
     private val _reposState: MutableSharedFlow<List<Repo>> = MutableSharedFlow()
     val reposState: SharedFlow<List<Repo>> = _reposState
 
-    //val isRepoLoadErrorOccurred: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     lateinit var repoList: List<Repo>
-    private lateinit var userEntity: User
+    private lateinit var _userEntity: User
+    val userEntity: User
+        get() = _userEntity
 
     fun eventGotUser() {
         viewModelScope.launch {
             when (val userResult = getUser.invoke()) {
                 is Result.Success -> {
-                    userEntity = userResult.data
+                    _userEntity = userResult.data
                     _isUserLoadedState.value = true
                 }
                 else -> _isAuthErrorOccurred.value = true
@@ -45,10 +44,10 @@ class RepoListViewModel @Inject constructor(
         }
     }
 
-    fun fetchUserRepos() {
+    fun fetchUserRepos(user: User) {
         //Fetching data with Kotlin Flow
         viewModelScope.launch {
-            when (val reposResult = getAllUserRepos.invoke(userEntity)) {
+            when (val reposResult = getAllUserRepos.invoke(user)) {
                 is Result.Success -> {
                     repoList = reposResult.data.toList()
                     _reposState.emit(repoList)
