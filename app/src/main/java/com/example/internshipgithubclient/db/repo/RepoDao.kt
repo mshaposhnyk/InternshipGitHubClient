@@ -8,24 +8,24 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addRepo(repo: RepoRoomEntity)
+    fun addRepo(repo: RepoRoomEntity): Completable
 
     @Update
-    suspend fun updateRepo(repo: RepoRoomEntity)
+    fun updateRepo(repo: RepoRoomEntity): Completable
 
     @Query("SELECT * FROM repo where ownerId=:userId")
-    suspend fun getAllUserRepos(userId: Int): List<RepoRoomEntity>
+    fun getAllUserRepos(userId: Int): Single<List<RepoRoomEntity>>
 
     @Query("SELECT * FROM repo where ownerId=:userId and name=:repoName")
-    suspend fun getDedicatedRepo(userId: Int, repoName: String): RepoRoomEntity
+    fun getDedicatedRepo(userId: Int, repoName: String): Single<RepoRoomEntity>
 
     @Transaction
     @Query("SELECT * from repo WHERE repoId = :repoId")
-    suspend fun getRepoWithWatchers(repoId: Int): ReposWithWatchers
+    fun getRepoWithWatchers(repoId: Int): Single<ReposWithWatchers>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addRepoWatcher(crossRef: ReposUsersCrossRef)
+    fun addRepoWatcher(crossRef: ReposUsersCrossRef): Completable
 
     @Delete
-    suspend fun deleteRepo(repo: RepoRoomEntity)
+    fun deleteRepo(repo: RepoRoomEntity): Completable
 }

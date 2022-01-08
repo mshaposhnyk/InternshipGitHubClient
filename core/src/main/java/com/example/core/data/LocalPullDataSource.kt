@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface LocalPullDataSource {
-    suspend fun addPull(pull: Pull)
-    suspend fun deletePull(pull: Pull)
-    suspend fun addPullUserCrossRef(pull: Pull, user: User)
-    suspend fun getRepoPulls(repo: Repo): Flow<Pull>
+    fun addPull(pull: Pull): Completable
+    fun deletePull(pull: Pull): Completable
+    fun addPullUserCrossRef(pull: Pull, user: User): Completable
+    fun getRepoPulls(repo: Repo): Single<List<Pull>>
 }

@@ -26,7 +26,11 @@ class RepoWatchersViewModel @Inject constructor(private val watchersRepo: GetWat
         viewModelScope.launch {
             //getting list of watchers for a given repo
             when (val result = watchersRepo.invoke(repo)) {
-                is Result.Success -> _listWatchers.value = result.data.toList()
+                is Result.Success -> {
+                    result.data.subscribe { it ->
+                        _listWatchers.value = it
+                    }
+                }
                 else -> _isFetchingWatchersFailed.value = true
             }
         }

@@ -15,17 +15,25 @@ class PullRepository(
     private val dataSourceLocal: LocalPullDataSource,
     private val userDataSource: LocalUserDataSource
 ) {
-    suspend fun getRepoPulls(repo: Repo): Flow<Pull> {
-        dataSourceRemote.getAll(repo)
-            .onEach { pull ->
-                userDataSource.add(pull.assignee)
-                dataSourceLocal.addPull(pull)
-                pull.assignees.filterNotNull()
-                    .forEach {
+    fun getRepoPulls(repo: Repo): Single<List<Pull>> {
+        return dataSourceRemote.getAll(repo)
+            .flattenAsObservable { it }
+            .flatMap{
+                userDataSource.add(it.assignee)
+                    .andThen(dataSourceLocal.addPull(it))
+                    .andThen(Observable.just(it))
+            }
+            .flatMapCompletable { pull ->
+                Observable.fromIterable(pull.assignees.filterNotNull())
+                    .flatMap {
                         userDataSource.add(it)
-                        dataSourceLocal.addPullUserCrossRef(pull, it)
+                            .andThen(Observable.just(it))
                     }
-            }.collect()
-        return dataSourceLocal.getRepoPulls(repo)
+                    .flatMapCompletable { user ->
+                        dataSourceLocal.addPullUserCrossRef(pull,user)
+                    }
+            }
+            .andThen(dataSourceLocal.getRepoPulls(repo))
+            .onErrorResumeNext (dataSourceLocal.getRepoPulls(repo))
     }
 }

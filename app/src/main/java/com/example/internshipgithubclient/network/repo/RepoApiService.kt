@@ -13,46 +13,46 @@ import retrofit2.http.Query
 interface RepoApiService {
     //Get repos pulls
     @GET("/repos/{owner}/{repo}/pulls")
-    suspend fun getPullsForRepo(
+    fun getPullsForRepo(
         @Path("owner") owner: String,
         @Path("repo") repo: String,
         @Query("state") state: String = "all"
-    ): List<PullNetworkEntity>
+    ): Single<List<PullNetworkEntity>>
 
     //Get issues for user repo
     @GET("/repos/{owner}/{repo}/issues")
-    suspend fun getIssuesForRepo(
+    fun getIssuesForRepo(
         @Path("owner") owner: String,
         @Path("repo") repo: String,
         @Query("state") state: String = "all"
-    ): List<IssueNetworkEntity>
+    ): Single<List<IssueNetworkEntity>>
 
     //Get people watching repository
     @GET("/repos/{owner}/{repo}/subscribers")
-    suspend fun getWatchersForRepo(
+    fun getWatchersForRepo(
         @Path("owner") owner: String,
         @Path("repo") repo: String
-    ): List<UserNetworkEntity>
+    ): Single<List<UserNetworkEntity>>
 
     //Get a user repository
     @GET("/repos/{owner}/{repo}")
-    suspend fun getRepo(
+    fun getRepo(
         @Path("owner") owner: String,
         @Path("repo") repo: String
-    ): RepoNetworkEntity
+    ): Single<RepoNetworkEntity>
 
     //Delete a user repository
     @DELETE("/repos/{owner}/{repo}")
     fun deleteRepo(
         @Path("owner") owner: String,
         @Path("repo") repo: String
-    )
+    ): Call<Void>
 
     //Get list of public repositories
     @GET("/repositories")
-    fun getPublicRepos():List<RepoNetworkEntity>
+    fun getPublicRepos(): Single<List<RepoNetworkEntity>>
 
     //Get user repositories
     @GET("/users/{username}/repos")
-    suspend fun getUserRepos(@Path("username") username: String): List<RepoNetworkEntity>
+    fun getUserRepos(@Path("username") username: String): Single<List<RepoNetworkEntity>>
 }

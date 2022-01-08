@@ -33,7 +33,11 @@ class PullsViewModel @Inject constructor(private val getRepoPulls: GetRepoPulls)
         //getting list of pull requests
         viewModelScope.launch {
             when(val result = getRepoPulls.invoke(repo)){
-                is Result.Success -> _pulls.value = result.data.toList()
+                is Result.Success -> {
+                    result.data.subscribe { it ->
+                        _pulls.value = it
+                    }
+                }
                 else -> _isPullsFetchingErrorOccurred.value = true
             }
         }

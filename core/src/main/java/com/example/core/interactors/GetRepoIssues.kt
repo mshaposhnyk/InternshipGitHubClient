@@ -7,12 +7,13 @@ import com.example.core.domain.Issue
 import com.example.core.domain.Repo
 import kotlinx.coroutines.flow.Flow
 import com.example.core.domain.Result
+import io.reactivex.Single
 
 class GetRepoIssues(
     private val issueRepository: IssueRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    suspend operator fun invoke(repo: Repo): Result<Flow<Issue>> {
+    operator fun invoke(repo: Repo): Result<Single<List<Issue>>> {
         return try {
             Result.Success(issueRepository.getRepoIssues(repo))
         } catch (ex: Throwable) {

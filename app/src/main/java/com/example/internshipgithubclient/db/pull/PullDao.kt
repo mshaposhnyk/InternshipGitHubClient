@@ -8,28 +8,28 @@ import io.reactivex.Single
 @Dao
 interface PullDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addPull(pullRoomEntity: PullRoomEntity)
+    fun addPull(pullRoomEntity: PullRoomEntity): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addPullsAssigneeCrossRef(pullsWithAssignees: PullsUsersCrossRef)
+    fun addPullsAssigneeCrossRef(pullsWithAssignees: PullsUsersCrossRef): Completable
 
     @Update
-    suspend fun updatePull(pullRoomEntity: PullRoomEntity)
+    fun updatePull(pullRoomEntity: PullRoomEntity)
 
     @Query("SELECT * from pull WHERE repo_url = :repoUrl")
-    suspend fun getAllPulls(repoUrl: String): List<PullRoomEntity>
+    fun getAllPulls(repoUrl: String): Single<List<PullRoomEntity>>
 
     @Transaction
     @Query("SELECT * from pull WHERE repo_url = :repoUrl")
-    suspend fun getPullsWithAssignees(repoUrl: String): List<PullWithAssignees>
+    fun getPullsWithAssignees(repoUrl: String): Single<List<PullWithAssignees>>
 
     @Transaction
     @Query("SELECT * from pull WHERE pullId = :pullId")
-    suspend fun getPullWithAssignees(pullId: Int): PullWithAssignees
+    fun getPullWithAssignees(pullId: Int): Single<PullWithAssignees>
 
     @Query("SELECT * from pull WHERE pullId=:id")
-    suspend fun getPullById(id: Int): PullRoomEntity
+    fun getPullById(id: Int): Single<PullRoomEntity>
 
     @Delete
-    suspend fun deletePull(pullRoomEntity: PullRoomEntity)
+    fun deletePull(pullRoomEntity: PullRoomEntity): Completable
 }

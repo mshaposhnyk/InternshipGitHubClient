@@ -7,17 +7,17 @@ import io.reactivex.Single
 @Dao
 interface UserDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUser(userRoomEntity: UserRoomEntity)
+    fun addUser(userRoomEntity: UserRoomEntity): Completable
 
     @Query("SELECT * FROM user WHERE isCurrentUser = 1")
-    suspend fun getAuthorizedUser(): UserRoomEntity
+    fun getAuthorizedUser(): Single<UserRoomEntity>
 
     @Query("SELECT * FROM user WHERE userId=:id")
-    suspend fun getUserById(id: Int): UserRoomEntity
+    fun getUserById(id: Int): Single<UserRoomEntity>
 
     @Update
-    suspend fun updateUser(userRoomEntity: UserRoomEntity)
+    fun updateUser(userRoomEntity: UserRoomEntity): Completable
 
     @Delete
-    suspend fun deleteUser(roomEntity: UserRoomEntity)
+    fun deleteUser(roomEntity: UserRoomEntity): Completable
 }

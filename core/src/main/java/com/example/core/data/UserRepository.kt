@@ -9,9 +9,11 @@ class UserRepository(
     private val dataSourceRemote: RemoteUserDataSource,
     private val dataSourceLocal: LocalUserDataSource
 ) {
-    suspend fun getUser(): User {
-        val user = dataSourceRemote.get()
-        dataSourceLocal.addAuthorized(user)
-        return dataSourceLocal.getAuthorized()
-    }
+    fun getUser(): Single<User> = dataSourceRemote.get()
+        .doOnSuccess {
+            dataSourceLocal.addAuthorized(it).subscribe()
+        }
+        .onErrorResumeNext {
+            dataSourceLocal.getAuthorized()
+        }
 }

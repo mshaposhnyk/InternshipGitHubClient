@@ -5,12 +5,13 @@ import com.example.core.data.UserRepository
 import com.example.core.domain.ErrorHandler
 import com.example.core.domain.User
 import com.example.core.domain.Result
+import io.reactivex.Single
 
 class GetUser(
     private val userRepository: UserRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    suspend operator fun invoke(): Result<User> {
+    operator fun invoke(): Result<Single<User>> {
         return try {
             Result.Success(userRepository.getUser())
         } catch (ex:Throwable){

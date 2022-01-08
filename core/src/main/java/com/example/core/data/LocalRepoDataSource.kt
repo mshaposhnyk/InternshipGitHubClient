@@ -7,10 +7,10 @@ import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 
 interface LocalRepoDataSource {
-    suspend fun getAll(user: User): Flow<Repo>
-    suspend fun get(user: User, repoName: String): Repo
-    suspend fun getWatchers(repo: Repo): Flow<User>
-    suspend fun addRepo(repo: Repo)
-    suspend fun addRepoWatcher(repo: Repo,user: User)
-    suspend fun deleteRepo(repo: Repo)
+    fun getAll(user: User): Single<List<Repo>>
+    fun get(user: User, repoName: String): Single<Repo>
+    fun getWatchers(repo: Repo): Single<List<User>>
+    fun addRepo(repo: Repo): Completable
+    fun addRepoWatcher(repo: Repo): Completable
+    fun deleteRepo(repo: Repo): Completable
 }

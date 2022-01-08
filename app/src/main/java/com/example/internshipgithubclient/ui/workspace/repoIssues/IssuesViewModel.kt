@@ -37,7 +37,11 @@ class IssuesViewModel @Inject constructor(private val getRepoIssues: GetRepoIssu
         //getting list of issues
         viewModelScope.launch {
             when(val result = getRepoIssues.invoke(repo)){
-                is Result.Success -> _issues.value = result.data.toList()
+                is Result.Success -> {
+                    result.data.subscribe { it ->
+                        _issues.value = it
+                    }
+                }
                 else -> _isIssuesFetchingErrorOccurred.value = true
             }
         }

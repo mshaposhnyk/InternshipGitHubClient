@@ -2,6 +2,7 @@ package com.example.core.data
 
 import com.example.core.domain.Repo
 import com.example.core.domain.User
+import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.*
 
@@ -9,30 +10,26 @@ class RepoRepository(
     private val dataSourceRemote: RemoteRepoDataSource,
     private val dataSourceLocal: LocalRepoDataSource,
 ) {
-    suspend fun getAllUserRepos(user: User): Flow<Repo> {
+    fun getAllUserRepos(user: User): Single<List<Repo>> {
         return dataSourceRemote.getAllRepos(user)
-            .onEach { repo ->
-                dataSourceLocal.addRepo(repo)
+            .flatMap { repoList ->
+                Observable.just(repoList)
+                    .flatMapIterable { it }
+                    .flatMap {
+                        dataSourceLocal.addRepo(it)
+                            .andThen(dataSourceLocal.addRepoWatcher(it))
+                            .andThen(Observable.just(it))
+                    }
+                    .toList()
             }
-            .map {
-                dataSourceLocal.get(user, it.name)
-            }
+            .onErrorResumeNext { dataSourceLocal.getAll(user) }
     }
 
-    suspend fun getDedicatedRepo(user: User, nameRepo: String): Repo{
-        val repo = dataSourceRemote.get(user, nameRepo)
-        dataSourceLocal.addRepo(repo)
-        return dataSourceLocal.get(user,nameRepo)
-    }
+    fun getDedicatedRepo(user: User, nameRepo: String): Single<Repo> =
+        dataSourceRemote.get(user, nameRepo)
 
-    suspend fun getWatchersRepo(repo: Repo): Flow<User> {
-        return dataSourceRemote.getWatchers(repo)
-            .onEach {
-                dataSourceLocal.addRepoWatcher(repo, it)
-            }
-            .flatMapConcat {
-                dataSourceLocal.getWatchers(repo)
-            }
-    }
-
+    fun getWatchersRepo(repo: Repo): Single<List<User>> =
+        dataSourceRemote.getWatchers(repo).onErrorResumeNext {
+            dataSourceLocal.getWatchers(repo)
+        }
 }

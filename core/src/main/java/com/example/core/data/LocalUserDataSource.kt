@@ -5,13 +5,13 @@ import io.reactivex.Completable
 import io.reactivex.Single
 
 interface LocalUserDataSource {
-    suspend fun deleteUser(user: User)
+    fun deleteUser(user: User): Completable
 
-    suspend fun addAuthorized(user: User)
+    fun addAuthorized(user: User): Completable
 
-    suspend fun add(user: User?)
+    fun add(user: User?): Completable
 
-    suspend fun getById(id: Int): User
+    fun getById(id: Int): Single<User>
 
-    suspend fun getAuthorized(): User
+    fun getAuthorized(): Single<User>
 }

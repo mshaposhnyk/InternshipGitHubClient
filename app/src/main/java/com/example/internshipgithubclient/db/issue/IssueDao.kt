@@ -7,26 +7,26 @@ import io.reactivex.Single
 @Dao
 interface IssueDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addIssue(issueRoomEntity: IssueRoomEntity)
+    fun addIssue(issueRoomEntity: IssueRoomEntity): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addIssueAssigneeCrossRef(issuesWithAssignees: IssuesUsersCrossRef)
+    fun addIssueAssigneeCrossRef(issuesWithAssignees: IssuesUsersCrossRef): Completable
 
     @Update
-    suspend fun updateIssue(issueRoomEntity: IssueRoomEntity)
+    fun updateIssue(issueRoomEntity: IssueRoomEntity): Completable
 
     @Transaction
     @Query("SELECT * from issue WHERE repo_url = :repoUrl")
-    suspend fun getIssuesWithAssignees(repoUrl: String): List<IssueWithAssignees>
+    fun getIssuesWithAssignees(repoUrl: String): Single<List<IssueWithAssignees>>
 
     @Transaction
     @Query("SELECT * FROM issue WHERE issueId=:issueId")
-    suspend fun getIssueWithAssignees(issueId: Int): IssueWithAssignees
+    fun getIssueWithAssignees(issueId: Int): Single<IssueWithAssignees>
 
     @Transaction
     @Query("SELECT * from issue WHERE issueId=:id")
-    suspend fun getIssueById(id: Int): IssueRoomEntity
+    fun getIssueById(id: Int): Single<IssueRoomEntity>
 
     @Delete
-    suspend fun deleteIssue(issueRoomEntity: IssueRoomEntity)
+    fun deleteIssue(issueRoomEntity: IssueRoomEntity): Completable
 }

@@ -9,6 +9,7 @@ import com.example.core.interactors.GetAllUserRepos
 import com.example.core.interactors.GetUser
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class RepoListViewModel @Inject constructor(
@@ -36,8 +37,10 @@ class RepoListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val userResult = getUser.invoke()) {
                 is Result.Success -> {
-                    _userEntity = userResult.data
-                    _isUserLoadedState.value = true
+                    userResult.data.subscribe { it ->
+                        _userEntity = it
+                        _isUserLoadedState.value = true
+                    }
                 }
                 else -> _isAuthErrorOccurred.value = true
             }
@@ -49,8 +52,12 @@ class RepoListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val reposResult = getAllUserRepos.invoke(user)) {
                 is Result.Success -> {
-                    repoList = reposResult.data.toList()
-                    _reposState.emit(repoList)
+                    reposResult.data.subscribe { it ->
+                        repoList = it
+                        runBlocking {
+                            _reposState.emit(repoList)
+                        }
+                    }
                 }
                 else -> _isReposLoadErrorOccurred.value = true
             }
