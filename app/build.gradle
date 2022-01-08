@@ -15,6 +15,9 @@ android {
     androidExtensions {
         experimental = true
     }
+    kapt {
+        generateStubs = true
+    }
     defaultConfig {
         applicationId "com.example.internshipgithubclient"
         minSdkVersion 24

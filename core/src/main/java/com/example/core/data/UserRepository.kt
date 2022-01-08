@@ -13,7 +13,4 @@ class UserRepository(
         .doOnSuccess {
             dataSourceLocal.addAuthorized(it).subscribe()
         }
-        .onErrorResumeNext {
-            dataSourceLocal.getAuthorized()
-        }
 }

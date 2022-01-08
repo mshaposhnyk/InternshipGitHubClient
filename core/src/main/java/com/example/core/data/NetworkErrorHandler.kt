@@ -8,7 +8,7 @@ class NetworkErrorHandler : ErrorHandler {
     override fun getError(throwable: Throwable): ErrorEntity {
         return when(throwable){
             is IOException -> ErrorEntity.ServiceUnavailable
-            else -> ErrorEntity.Uknown
+            else -> ErrorEntity.Unknown
         }
     }
 }

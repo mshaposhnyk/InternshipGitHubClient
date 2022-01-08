@@ -90,7 +90,7 @@ class RepoListViewModelTest {
         //Given
         val authUser = createTestUser()
         whenever(getUser.invoke()).thenReturn(Result.Success(authUser))
-        whenever(getAllUserRepos.invoke(any())).thenReturn(Result.Error(ErrorEntity.Uknown))
+        whenever(getAllUserRepos.invoke(any())).thenReturn(Result.Error(ErrorEntity.Unknown))
         viewModel = RepoListViewModel(getUser, getAllUserRepos)
         //When
         viewModel.eventGotUser()

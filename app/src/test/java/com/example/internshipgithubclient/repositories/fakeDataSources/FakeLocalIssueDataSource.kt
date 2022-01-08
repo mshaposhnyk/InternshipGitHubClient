@@ -13,7 +13,7 @@ class FakeLocalIssueDataSource: LocalIssueDataSource {
     val issueAssignee = HashMap<Issue,User>()
 
 
-    override suspend fun addIssue(issue: Issue) {
+    override fun addIssue(issue: Issue) {
         listOfIssues.add(issue)
     }
 

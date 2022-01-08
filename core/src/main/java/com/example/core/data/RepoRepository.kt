@@ -29,7 +29,5 @@ class RepoRepository(
         dataSourceRemote.get(user, nameRepo)
 
     fun getWatchersRepo(repo: Repo): Single<List<User>> =
-        dataSourceRemote.getWatchers(repo).onErrorResumeNext {
-            dataSourceLocal.getWatchers(repo)
-        }
+        dataSourceRemote.getWatchers(repo)
 }
