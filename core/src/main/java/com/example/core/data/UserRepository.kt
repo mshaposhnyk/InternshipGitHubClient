@@ -2,15 +2,24 @@ package com.example.core.data
 
 import com.example.core.domain.User
 import io.reactivex.Single
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.core.domain.Result
 
-class UserRepository(
+
+open class UserRepository(
     private val dataSourceRemote: RemoteUserDataSource,
     private val dataSourceLocal: LocalUserDataSource
 ) {
-    fun getUser(): Single<User> = dataSourceRemote.get()
-        .doOnSuccess {
-            dataSourceLocal.addAuthorized(it).subscribe()
-        }
+    open fun getUser(): Single<Result<User>> {
+        val remoteUser = dataSourceRemote.get()
+            .flatMap {
+                dataSourceLocal.addAuthorized(it)
+                    .andThen(Single.just(it))
+            }
+        val localUser = dataSourceLocal.getAuthorized()
+        return Single.concat(remoteUser,localUser)
+            .lastOrError()
+            .map {
+                Result.Success(it)
+            }
+    }
 }

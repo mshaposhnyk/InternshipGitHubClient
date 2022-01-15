@@ -38,6 +38,8 @@ class FakeLocalUserDataSource : LocalUserDataSource {
     }
 
     override fun getAuthorized(): Single<User> {
-        return Single.just(listOfUsers.first())
+        return Single.create {
+            it.onSuccess((listOfUsers.first()))
+        }
     }
 }

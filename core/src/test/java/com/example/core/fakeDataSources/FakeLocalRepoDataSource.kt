@@ -17,7 +17,7 @@ class FakeLocalRepoDataSource : LocalRepoDataSource {
     }
 
     override fun get(user: User, repoName: String): Single<Repo> {
-        var repo = createTestRepo(-1, user.id)
+        var repo = createTestRepo(-1, user.id, repoName = repoName)
         listOfRepos.forEach {
             if (it.owner.id == user.id) {
                 repo = it
@@ -28,7 +28,9 @@ class FakeLocalRepoDataSource : LocalRepoDataSource {
     }
 
     override fun getWatchers(repo: Repo): Single<List<User>> {
-        return Single.just(repoWatchers[repo])
+        return Single.create {
+            it.onSuccess(repoWatchers[repo]?: listOf())
+        }
     }
 
     override fun addRepo(repo: Repo): Completable {
@@ -36,15 +38,19 @@ class FakeLocalRepoDataSource : LocalRepoDataSource {
         return Completable.complete()
     }
 
-    override fun addRepoWatcher(repo: Repo): Completable {
+    override fun addRepoWatcher(repo: Repo, user: User): Completable {
         if(repoWatchers.containsKey(repo)) {
-            repoWatchers[repo]?.add(createTestUser(2))
+            repoWatchers[repo]?.add(user)
         } else {
             val watchersList = ArrayList<User>()
-            watchersList.add(createTestUser(2))
+            watchersList.add(user)
             repoWatchers[repo] = watchersList
         }
         return Completable.complete()
+    }
+
+    override fun addRepoWatcher(repo: Repo): Completable {
+        return addRepoWatcher(repo,createTestUser(2))
     }
 
     override fun deleteRepo(repo: Repo): Completable {

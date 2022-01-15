@@ -4,36 +4,35 @@ import com.example.core.domain.Pull
 import com.example.core.domain.Repo
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
+import com.example.core.domain.Result
 
-class PullRepository(
+open class PullRepository(
     private val dataSourceRemote: RemotePullDataSource,
     private val dataSourceLocal: LocalPullDataSource,
     private val userDataSource: LocalUserDataSource
 ) {
-    fun getRepoPulls(repo: Repo): Single<List<Pull>> {
-        return dataSourceRemote.getAll(repo)
+    open fun getRepoPulls(repo: Repo): Single<Result<List<Pull>>> {
+        val remotePulls = dataSourceRemote.getAll(repo)
             .flattenAsObservable { it }
-            .flatMap{
-                userDataSource.add(it.assignee)
-                    .andThen(dataSourceLocal.addPull(it))
-                    .andThen(Observable.just(it))
+            .flatMap{ pull ->
+                userDataSource.add(pull.assignee)
+                    .andThen(dataSourceLocal.addPull(pull))
+                    .andThen(Observable.fromIterable(pull.assignees.filterNotNull())
+                        .flatMap {
+                            userDataSource.add(it)
+                                .andThen(Observable.just(it))
+                        }
+                        .flatMapCompletable { user ->
+                            dataSourceLocal.addPullUserCrossRef(pull,user)
+                        })
+                    .andThen(Observable.just(pull))
+            }.toList()
+
+        val localPulls = dataSourceLocal.getRepoPulls(repo)
+        return Single.concat(remotePulls, localPulls)
+            .lastOrError()
+            .map {
+                Result.Success(it)
             }
-            .flatMapCompletable { pull ->
-                Observable.fromIterable(pull.assignees.filterNotNull())
-                    .flatMap {
-                        userDataSource.add(it)
-                            .andThen(Observable.just(it))
-                    }
-                    .flatMapCompletable { user ->
-                        dataSourceLocal.addPullUserCrossRef(pull,user)
-                    }
-            }
-            .andThen(dataSourceLocal.getRepoPulls(repo))
-            .onErrorResumeNext (dataSourceLocal.getRepoPulls(repo))
     }
 }

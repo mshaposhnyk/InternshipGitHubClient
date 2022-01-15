@@ -24,7 +24,6 @@ class RetrofitModule {
                 .addHeader(HEADER_APPLICATION, HEADER_APPLICATION_CONTENT)
                 .build()
             chain.proceed(newRequest)
-
         }
     }
 

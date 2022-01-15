@@ -5,31 +5,33 @@ import com.example.core.domain.Repo
 import io.reactivex.Observable
 import io.reactivex.Observable.just
 import io.reactivex.Single
+import com.example.core.domain.*
 
-class IssueRepository(
+
+open class IssueRepository(
     private val dataSourceRemote: RemoteIssueDataSource,
     private val dataSourceLocal: LocalIssueDataSource,
     private val userDataSource: LocalUserDataSource
 ) {
-    fun getRepoIssues(repo: Repo): Single<List<Issue>> {
-        return dataSourceRemote.getRepoIssues(repo)
+   open fun getRepoIssues(repo: Repo): Single<Result<List<Issue>>> {
+        val remoteIssues = dataSourceRemote.getRepoIssues(repo)
             .flattenAsObservable { it }
-            .flatMap {
-                userDataSource.add(it.assignee)
-                    .andThen(dataSourceLocal.addIssue(it))
-                    .andThen(just(it))
+            .flatMap { issue ->
+                userDataSource.add(issue.assignee)
+                    .andThen(dataSourceLocal.addIssue(issue))
+                    .andThen(Observable.fromIterable(issue.assignees.filterNotNull())
+                        .flatMapCompletable {
+                            userDataSource.add(it)
+                                .andThen(dataSourceLocal.addIssueAssigneeCrossRef(issue, it))
+                        })
+                    .andThen(just(issue))
+            }.toList()
+
+        val localIssues = dataSourceLocal.getRepoIssues(repo)
+        return Single.concat(remoteIssues, localIssues)
+            .lastOrError()
+            .map {
+                Result.Success(it)
             }
-            .flatMapCompletable { issue ->
-                Observable.fromIterable(issue.assignees.filterNotNull())
-                    .flatMap {
-                        userDataSource.add(it)
-                            .andThen(just(it))
-                    }
-                    .flatMapCompletable { user ->
-                        dataSourceLocal.addIssueAssigneeCrossRef(issue,user)
-                    }
-            }
-            .andThen(dataSourceLocal.getRepoIssues(repo))
-            .onErrorResumeNext (dataSourceLocal.getRepoIssues(repo))
     }
 }

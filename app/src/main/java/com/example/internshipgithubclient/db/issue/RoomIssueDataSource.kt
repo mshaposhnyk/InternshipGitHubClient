@@ -24,20 +24,14 @@ class RoomIssueDataSource(private val issueDao: IssueDao, private val userDao: U
     LocalIssueDataSource {
     override fun addIssue(issue: Issue): Completable {
         return issueDao.addIssue(issue.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun addIssueAssigneeCrossRef(issue: Issue, assignee: User): Completable {
         return issueDao.addIssueAssigneeCrossRef(IssuesUsersCrossRef(issue.id, assignee.id))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun deleteIssue(issue: Issue): Completable {
         return issueDao.deleteIssue(issue.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getRepoIssues(repo: Repo): Single<List<Issue>> {
@@ -67,7 +61,5 @@ class RoomIssueDataSource(private val issueDao: IssueDao, private val userDao: U
                 it.toDomain()
             }
             .toList()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 }

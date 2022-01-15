@@ -4,14 +4,15 @@ import com.example.core.domain.Repo
 import com.example.core.domain.User
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.flow.*
+import com.example.core.domain.*
 
-class RepoRepository(
+
+open class RepoRepository(
     private val dataSourceRemote: RemoteRepoDataSource,
     private val dataSourceLocal: LocalRepoDataSource,
 ) {
-    fun getAllUserRepos(user: User): Single<List<Repo>> {
-        return dataSourceRemote.getAllRepos(user)
+    open fun getAllUserRepos(user: User): Single<Result<List<Repo>>> {
+        val remoteRepos = dataSourceRemote.getAllRepos(user)
             .flatMap { repoList ->
                 Observable.just(repoList)
                     .flatMapIterable { it }
@@ -22,12 +23,44 @@ class RepoRepository(
                     }
                     .toList()
             }
-            .onErrorResumeNext { dataSourceLocal.getAll(user) }
+        val localRepos = dataSourceLocal.getAll(user)
+        return Single.concat(remoteRepos, localRepos)
+            .lastOrError()
+            .map {
+                Result.Success(it)
+            }
     }
 
-    fun getDedicatedRepo(user: User, nameRepo: String): Single<Repo> =
-        dataSourceRemote.get(user, nameRepo)
+    open fun getDedicatedRepo(user: User, nameRepo: String): Single<Result<Repo>> {
+        val remoteRepo = dataSourceRemote.get(user, nameRepo)
+            .flatMap {
+                dataSourceLocal.addRepo(it)
+                    .andThen(dataSourceLocal.addRepoWatcher(it))
+                    .andThen(Single.just(it))
+            }
+        val localRepo = dataSourceLocal.get(user, nameRepo)
+        return Single.concat(remoteRepo, localRepo)
+            .lastOrError()
+            .map {
+                Result.Success(it)
+            }
+    }
 
-    fun getWatchersRepo(repo: Repo): Single<List<User>> =
-        dataSourceRemote.getWatchers(repo)
+    open fun getWatchersRepo(repo: Repo): Single<Result<List<User>>> {
+        val remoteWatchers = dataSourceRemote.getWatchers(repo)
+            .flatMap { userList ->
+                Observable.just(userList)
+                    .flatMapIterable { it }
+                    .flatMap { user ->
+                        dataSourceLocal.addRepoWatcher(repo, user)
+                            .andThen(Observable.just(user))
+                    }.toList()
+            }
+        val localWatchers = dataSourceLocal.getWatchers(repo)
+        return Single.concat(remoteWatchers,localWatchers)
+            .lastOrError()
+            .map {
+                Result.Success(it)
+            }
+    }
 }

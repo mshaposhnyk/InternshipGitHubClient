@@ -20,11 +20,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.ArrayList
 import javax.inject.Inject
 
 @FragmentScope
 class IssuesViewModel @Inject constructor(private val getRepoIssues: GetRepoIssues) : ViewModel() {
+    var compositeDisposable = CompositeDisposable()
+
     private val _isIssuesFetchingErrorOccurred = MutableStateFlow(false)
     val isIssuesFetchingErrorOccurred: StateFlow<Boolean> = _isIssuesFetchingErrorOccurred
 
@@ -34,16 +37,21 @@ class IssuesViewModel @Inject constructor(private val getRepoIssues: GetRepoIssu
 
 
     fun fetchIssues(repo: Repo) {
-        //getting list of issues
-        viewModelScope.launch {
-            when(val result = getRepoIssues.invoke(repo)){
-                is Result.Success -> {
-                    result.data.subscribe { it ->
-                        _issues.value = it
+        compositeDisposable.add(getRepoIssues.invoke(repo)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { it ->
+                when(it){
+                    is Result.Success -> {
+                        _issues.value = it.data
                     }
+                    else -> _isIssuesFetchingErrorOccurred.value = true
                 }
-                else -> _isIssuesFetchingErrorOccurred.value = true
-            }
-        }
+            })
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.dispose()
     }
 }

@@ -15,8 +15,6 @@ import kotlinx.coroutines.flow.map
 class RestRemotePullDataSource(private val repoApiService: RepoApiService) : RemotePullDataSource {
     override fun getAll(repo: Repo): Single<List<Pull>> {
         return repoApiService.getPullsForRepo(repo.owner.login, repo.name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .flatMap { list -> Single.just(list.map { it.toDomain() }) }
     }
 }

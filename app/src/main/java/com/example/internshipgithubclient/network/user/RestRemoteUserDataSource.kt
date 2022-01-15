@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.flow
 class RestRemoteUserDataSource(private val userApiService: UserApiService) : RemoteUserDataSource {
     override fun get(): Single<User> {
         return userApiService.getAuthenticatedUser()
-            .subscribeOn(Schedulers.io())
-            .flatMap { Single.just(it.toDomain()) }
+            .flatMap {
+                Single.just(it.toDomain())
+            }
     }
 }

@@ -20,20 +20,14 @@ class RoomPullDataSource(private val pullDao: PullDao, private val userDao: User
     LocalPullDataSource {
     override fun addPull(pull: Pull): Completable {
         return pullDao.addPull(pull.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun deletePull(pull: Pull): Completable {
         return pullDao.deletePull(pull.fromDomain())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun addPullUserCrossRef(pull: Pull, user: User): Completable {
         return pullDao.addPullsAssigneeCrossRef(PullsUsersCrossRef(pull.id,user.id))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getRepoPulls(repo: Repo): Single<List<Pull>> {
@@ -63,8 +57,6 @@ class RoomPullDataSource(private val pullDao: PullDao, private val userDao: User
                 it.toDomain()
             }
             .toList()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
 }

@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.map
 class RestRemoteIssueDataSource (private val repoApiService: RepoApiService):RemoteIssueDataSource {
     override fun getRepoIssues(repo: Repo): Single<List<Issue>> {
         return repoApiService.getIssuesForRepo(repo.owner.login, repo.name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .flatMap { list -> Single.just(list.map { it.toDomain() }) }
     }
 }

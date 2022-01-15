@@ -13,11 +13,10 @@ class GetRepoIssues(
     private val issueRepository: IssueRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    operator fun invoke(repo: Repo): Result<Single<List<Issue>>> {
-        return try {
-            Result.Success(issueRepository.getRepoIssues(repo))
-        } catch (ex: Throwable) {
-            Result.Error(errorHandler.getError((ex)))
-        }
+    operator fun invoke(repo: Repo): Single<Result<List<Issue>>> {
+        return issueRepository.getRepoIssues(repo)
+            .onErrorReturn {
+                Result.Error(errorHandler.getError(it))
+            }
     }
 }

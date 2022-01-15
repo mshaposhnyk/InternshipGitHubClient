@@ -4,6 +4,7 @@ import com.example.core.data.LocalUserDataSource
 import com.example.core.domain.User
 import com.example.internshipgithubclient.db.fromDomain
 import com.example.internshipgithubclient.db.toDomain
+import com.example.internshipgithubclient.ui.createDummyUser
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -19,16 +20,11 @@ class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
                 if (it.userId == user.id) isCurrentUser = true
             }.dispose()
         return userDao.deleteUser(user.fromDomain(isCurrentUser))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun addAuthorized(user: User): Completable {
         return userDao.addUser(user.fromDomain(true))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
-
 
     override fun add(user: User?): Completable {
         val completable = if (user == null)
@@ -43,21 +39,22 @@ class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
                 }
 
         return completable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getById(id: Int): Single<User> {
         return userDao.getUserById(id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .map { it.toDomain() }
     }
 
     override fun getAuthorized(): Single<User> {
         return userDao.getAuthorizedUser()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { it.toDomain() }
+            .doOnError {
+                it
+                val t = 0
+            }
+            .onErrorReturnItem(createDummyUser().fromDomain(true))
+            .map {
+                it.toDomain()
+            }
     }
 }

@@ -7,6 +7,8 @@ import com.example.core.fakeDataSources.FakeLocalUserDataSource
 import com.example.core.fakeDataSources.FakeRemoteIssueDataSource
 import org.junit.Assert
 import org.junit.Test
+import com.example.core.domain.Result
+
 
 class IssueRepositoryTest {
     private val issueRepository = IssueRepository(
@@ -24,8 +26,8 @@ class IssueRepositoryTest {
             createTestIssue(repo.owner.id)
         )
 
-        val earnedRemoteIssues = issueRepository.getRepoIssues(repo)
+        val earnedRemoteIssues = (issueRepository.getRepoIssues(repo).blockingGet() as Result.Success)
 
-        Assert.assertEquals(givenRemoteIssues.toList(),earnedRemoteIssues.blockingGet())
+        Assert.assertEquals(givenRemoteIssues,earnedRemoteIssues.data)
     }
 }

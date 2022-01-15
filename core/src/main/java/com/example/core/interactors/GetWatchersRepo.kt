@@ -13,11 +13,10 @@ class GetWatchersRepo(
     private val repoRepository: RepoRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    operator fun invoke(repo: Repo): Result<Single<List<User>>> {
-        return try {
-            Result.Success(repoRepository.getWatchersRepo(repo))
-        } catch (ex: Throwable) {
-            Result.Error(errorHandler.getError(ex))
-        }
+    operator fun invoke(repo: Repo): Single<Result<List<User>>> {
+        return repoRepository.getWatchersRepo(repo)
+            .onErrorReturn {
+                Result.Error(errorHandler.getError(it))
+            }
     }
 }

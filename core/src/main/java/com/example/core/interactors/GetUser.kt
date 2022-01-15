@@ -11,11 +11,10 @@ class GetUser(
     private val userRepository: UserRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    operator fun invoke(): Result<Single<User>> {
-        return try {
-            Result.Success(userRepository.getUser())
-        } catch (ex:Throwable){
-            Result.Error(errorHandler.getError(ex))
-        }
+    operator fun invoke(): Single<Result<User>> {
+        return userRepository.getUser()
+            .onErrorReturn {
+                Result.Error(errorHandler.getError(it))
+            }
     }
 }

@@ -12,11 +12,10 @@ class GetDedicatedRepo(
     private val repoRepository: RepoRepository,
     private val errorHandler: ErrorHandler = NetworkErrorHandler()
 ) {
-    operator fun invoke(user: User, nameRepo: String): Result<Single<Repo>> {
-        return try {
-            Result.Success(repoRepository.getDedicatedRepo(user, nameRepo))
-        } catch (ex: Throwable) {
-            Result.Error(errorHandler.getError(ex))
-        }
+    operator fun invoke(user: User, nameRepo: String): Single<Result<Repo>> {
+        return repoRepository.getDedicatedRepo(user, nameRepo)
+            .onErrorReturn {
+                Result.Error(errorHandler.getError(it))
+            }
     }
 }

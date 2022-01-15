@@ -11,6 +11,7 @@ interface LocalRepoDataSource {
     fun get(user: User, repoName: String): Single<Repo>
     fun getWatchers(repo: Repo): Single<List<User>>
     fun addRepo(repo: Repo): Completable
+    fun addRepoWatcher(repo: Repo, user: User): Completable
     fun addRepoWatcher(repo: Repo): Completable
     fun deleteRepo(repo: Repo): Completable
 }

@@ -2,6 +2,7 @@ package com.example.core.data
 
 import com.example.core.createTestPull
 import com.example.core.createTestRepo
+import com.example.core.domain.Result
 import com.example.core.fakeDataSources.FakeLocalPullDataSource
 import com.example.core.fakeDataSources.FakeLocalUserDataSource
 import com.example.core.fakeDataSources.FakeRemotePullDataSource
@@ -24,8 +25,8 @@ class PullRepositoryTest {
             createTestPull(repo.owner.id)
         )
 
-        val earnedRemotePulls = pullRepository.getRepoPulls(repo)
+        val earnedRemotePulls = (pullRepository.getRepoPulls(repo).blockingGet() as Result.Success)
 
-        Assert.assertEquals(givenRemotePulls.toList(), earnedRemotePulls.blockingGet())
+        Assert.assertEquals(givenRemotePulls.toList(), earnedRemotePulls.data)
     }
 }
