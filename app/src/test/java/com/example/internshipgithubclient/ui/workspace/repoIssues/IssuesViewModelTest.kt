@@ -1,13 +1,13 @@
-package com.example.internshipgithubclient.viewModels
+package com.example.internshipgithubclient.ui.workspace.repoIssues
 
 import com.example.core.domain.*
-import com.example.core.interactors.GetRepoPulls
-import com.example.internshipgithubclient.CoroutineTestRule
-import com.example.internshipgithubclient.ui.workspace.repoDetails.RepoDetailsViewModel
+import com.example.core.interactors.GetRepoIssues
+import com.example.internshipgithubclient.RxImmediateSchedulerRule
+import com.example.internshipgithubclient.ui.workspace.repoIssues.IssuesViewModel
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
+import io.reactivex.Single
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
@@ -20,44 +20,49 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.ArrayList
 
 @RunWith(MockitoJUnitRunner::class)
-class RepoDetailsViewModelTest {
+class IssuesViewModelTest {
     @Mock
-    private lateinit var getRepoPulls: GetRepoPulls
+    private lateinit var getRepoIssues: GetRepoIssues
     @Mock
     private lateinit var repo: Repo
-    private lateinit var viewModel:RepoDetailsViewModel
-    @ExperimentalCoroutinesApi
+    private lateinit var viewModel:IssuesViewModel
+
     @Rule
     @JvmField
-    val coroutineTestRule = CoroutineTestRule()
+    val rxTestRule= RxImmediateSchedulerRule()
+
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
     }
-    @ExperimentalCoroutinesApi
+
     @Test
-    fun `get repo pulls success`() = runBlockingTest {
+    fun `get repo issues success`() {
         //Given
-        val pull1 = createTestPull()
-        val pull2 = createTestPull()
-        whenever(getRepoPulls.invoke(any())).thenReturn(Result.Success(listOf(pull1, pull2).asFlow()))
-        viewModel = RepoDetailsViewModel(getRepoPulls)
+        val issue1 = createTestIssue()
+        val issue2 = createTestIssue()
+        whenever(getRepoIssues.invoke(any())).thenReturn(
+            Single.just(Result.Success(listOf(issue1, issue2)))
+        )
+        viewModel = IssuesViewModel(getRepoIssues)
         //When
-        viewModel.fetchPulls(repo)
+        viewModel.fetchIssues(repo)
         //Then
-        Assert.assertEquals(listOf(pull1, pull2), viewModel.pulls.value)
+        Assert.assertEquals(listOf(issue1, issue2), viewModel.issues.value)
     }
 
     @ExperimentalCoroutinesApi
     @Test
     fun `get repo service error occurred`() = runBlockingTest {
         //Given
-        whenever(getRepoPulls.invoke(any())).thenReturn(Result.Error(ErrorEntity.ServiceUnavailable))
-        viewModel = RepoDetailsViewModel(getRepoPulls)
+        whenever(getRepoIssues.invoke(any())).thenReturn(
+            Single.just(Result.Error(ErrorEntity.ServiceUnavailable))
+        )
+        viewModel = IssuesViewModel(getRepoIssues)
         //When
-        viewModel.fetchPulls(repo)
+        viewModel.fetchIssues(repo)
         //Then
-        Assert.assertEquals(viewModel.isPullsFetchingErrorOccurred.value,true)
+        Assert.assertEquals(viewModel.isIssuesFetchingErrorOccurred.value,true)
     }
 
     private fun createTestUser() = User(
@@ -75,7 +80,7 @@ class RepoDetailsViewModelTest {
         publicGists = 3,
         publicRepos = 4
     )
-    private fun createTestPull() = Pull(
+    private fun createTestIssue() = Issue(
         id = 1,
         number = 2,
         repoUrl = "",
@@ -84,6 +89,7 @@ class RepoDetailsViewModelTest {
         body = "",
         user = createTestUser(),
         assignee = null,
-        assignees = ArrayList<User>()
+        assignees = ArrayList<User>(),
+        commentsCount = 2
     )
 }

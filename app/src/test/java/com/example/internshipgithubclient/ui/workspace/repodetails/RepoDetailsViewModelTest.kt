@@ -1,62 +1,64 @@
-package com.example.internshipgithubclient.viewModels;
+package com.example.internshipgithubclient.ui.workspace.repodetails
 
 import com.example.core.domain.*
-import com.example.core.interactors.GetRepoPulls;
-import com.example.internshipgithubclient.CoroutineTestRule
-import com.example.internshipgithubclient.ui.workspace.repoPulls.PullsViewModel;
+import com.example.core.interactors.GetRepoPulls
+import com.example.internshipgithubclient.RxImmediateSchedulerRule
+import com.example.internshipgithubclient.ui.workspace.repoDetails.RepoDetailsViewModel
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
+import io.reactivex.Single
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito.`when`
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-
+import org.mockito.junit.MockitoJUnitRunner
+import java.util.ArrayList
 
 @RunWith(MockitoJUnitRunner::class)
-class PullsViewModelTest {
+class RepoDetailsViewModelTest {
     @Mock
     private lateinit var getRepoPulls: GetRepoPulls
     @Mock
     private lateinit var repo: Repo
-    private lateinit var viewModel: PullsViewModel
-    @ExperimentalCoroutinesApi
+    private lateinit var viewModel:RepoDetailsViewModel
+
     @Rule
     @JvmField
-    val coroutineTestRule = CoroutineTestRule()
+    val rxTestRule= RxImmediateSchedulerRule()
+
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
     }
-    @ExperimentalCoroutinesApi
+
     @Test
-    fun `get repo pulls success`() = runBlockingTest {
+    fun `get repo pulls success`() {
         //Given
         val pull1 = createTestPull()
         val pull2 = createTestPull()
-        whenever(getRepoPulls.invoke(any())).thenReturn(Result.Success(listOf(pull1, pull2).asFlow()))
-        viewModel = PullsViewModel(getRepoPulls)
+        whenever(getRepoPulls.invoke(any())).thenReturn(
+            Single.just(Result.Success(listOf(pull1, pull2)))
+        )
+        viewModel = RepoDetailsViewModel(getRepoPulls)
         //When
         viewModel.fetchPulls(repo)
         //Then
         Assert.assertEquals(listOf(pull1, pull2), viewModel.pulls.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get repo service error occurred`() = runBlockingTest {
+    fun `get repo service error occurred`() {
         //Given
-        whenever(getRepoPulls.invoke(any())).thenReturn(Result.Error(ErrorEntity.ServiceUnavailable))
-        viewModel = PullsViewModel(getRepoPulls)
+        whenever(getRepoPulls.invoke(any())).thenReturn(
+            Single.just(Result.Error(ErrorEntity.ServiceUnavailable))
+        )
+        viewModel = RepoDetailsViewModel(getRepoPulls)
         //When
         viewModel.fetchPulls(repo)
         //Then

@@ -1,16 +1,15 @@
-package com.example.internshipgithubclient.viewModels
+package com.example.internshipgithubclient.ui.workspace.repoWatchers
 
-import com.example.core.data.RepoRepository
 import com.example.core.domain.ErrorEntity
 import com.example.core.domain.Repo
 import com.example.core.domain.Result
 import com.example.core.domain.User
 import com.example.core.interactors.GetWatchersRepo
-import com.example.internshipgithubclient.CoroutineTestRule
-import com.example.internshipgithubclient.ui.workspace.repoPulls.PullsViewModel
+import com.example.internshipgithubclient.RxImmediateSchedulerRule
 import com.example.internshipgithubclient.ui.workspace.repoWatchers.RepoWatchersViewModel
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
+import io.reactivex.Single
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -33,23 +32,23 @@ class RepoWatchersViewModelTest {
 
     private lateinit var viewModel: RepoWatchersViewModel
 
-    @ExperimentalCoroutinesApi
     @Rule
     @JvmField
-    val coroutineTestRule = CoroutineTestRule()
+    val rxTestRule= RxImmediateSchedulerRule()
 
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get repo watchers of repo success`()= runBlockingTest {
+    fun `get repo watchers of repo success`() {
         //Given
         val firstTestWatcher = createTestUser()
         val secondTestWatcher = createTestUser()
-        whenever(getWatchersRepo.invoke(any())).thenReturn(Result.Success(flowOf(firstTestWatcher,secondTestWatcher)))
+        whenever(getWatchersRepo.invoke(any())).thenReturn(
+            Single.just(Result.Success(listOf(firstTestWatcher,secondTestWatcher)))
+        )
         viewModel = RepoWatchersViewModel(getWatchersRepo)
         //When
         viewModel.fetchWatchers(repo)
@@ -57,11 +56,12 @@ class RepoWatchersViewModelTest {
         Assert.assertEquals(listOf(firstTestWatcher,secondTestWatcher),viewModel.listWatchers.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get repo service error occurred`() = runBlockingTest {
+    fun `get repo service error occurred`() {
         //Given
-        whenever(getWatchersRepo.invoke(any())).thenReturn(Result.Error(ErrorEntity.ServiceUnavailable))
+        whenever(getWatchersRepo.invoke(any())).thenReturn(
+            Single.just(Result.Error(ErrorEntity.ServiceUnavailable))
+        )
         viewModel = RepoWatchersViewModel(getWatchersRepo)
         //When
         viewModel.fetchWatchers(repo)

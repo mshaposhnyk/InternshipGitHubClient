@@ -1,4 +1,4 @@
-package com.example.internshipgithubclient.viewModels
+package com.example.internshipgithubclient.ui.workspace.repoList
 
 import com.example.core.domain.ErrorEntity
 import com.example.core.domain.Repo
@@ -6,14 +6,12 @@ import com.example.core.domain.Result
 import com.example.core.domain.User
 import com.example.core.interactors.GetAllUserRepos
 import com.example.core.interactors.GetUser
-import com.example.internshipgithubclient.CoroutineTestRule
-import com.example.internshipgithubclient.ui.workspace.repoList.RepoListViewModel
+import com.example.internshipgithubclient.RxImmediateSchedulerRule
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
+import io.reactivex.Single
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
@@ -33,22 +31,22 @@ class RepoListViewModelTest {
     private lateinit var getAllUserRepos: GetAllUserRepos
     private lateinit var viewModel: RepoListViewModel
 
-    @ExperimentalCoroutinesApi
     @Rule
     @JvmField
-    val coroutineTestRule = CoroutineTestRule()
+    val rxTestRule= RxImmediateSchedulerRule()
 
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get authorised user success`() = runBlockingTest {
+    fun `get authorised user success`() {
         //Given
         val authUser = createTestUser()
-        whenever(getUser.invoke()).thenReturn(Result.Success(authUser))
+        whenever(getUser.invoke()).thenReturn(
+            Single.just(Result.Success(authUser))
+        )
         viewModel = RepoListViewModel(getUser, getAllUserRepos)
         //When
         viewModel.eventGotUser()
@@ -56,11 +54,12 @@ class RepoListViewModelTest {
         Assert.assertEquals(authUser, viewModel.userEntity)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get authorized user service error`() = runBlockingTest {
+    fun `get authorized user service error`() {
         //Given
-        whenever(getUser.invoke()).thenReturn(Result.Error(ErrorEntity.ServiceUnavailable))
+        whenever(getUser.invoke()).thenReturn(
+            Single.just(Result.Error(ErrorEntity.ServiceUnavailable))
+        )
         viewModel = RepoListViewModel(getUser, getAllUserRepos)
         //When
         viewModel.eventGotUser()
@@ -68,14 +67,17 @@ class RepoListViewModelTest {
         Assert.assertEquals(true, viewModel.isAuthErrorOccurred.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `get repo list success`() = runBlockingTest {
+    fun `get repo list success`() {
         //Given
         val authUser = createTestUser()
-        whenever(getUser.invoke()).thenReturn(Result.Success(authUser))
-        val flowRepos = flowOf(createTestRepo(), createTestRepo())
-        whenever(getAllUserRepos.invoke(any())).thenReturn(Result.Success(flowRepos))
+        whenever(getUser.invoke()).thenReturn(
+            Single.just(Result.Success(authUser))
+        )
+        val flowRepos = listOf(createTestRepo(), createTestRepo())
+        whenever(getAllUserRepos.invoke(any())).thenReturn(
+            Single.just(Result.Success(flowRepos))
+        )
         viewModel = RepoListViewModel(getUser, getAllUserRepos)
         //When
         viewModel.eventGotUser()
@@ -89,8 +91,12 @@ class RepoListViewModelTest {
     fun `get repo list service error`()= runBlockingTest {
         //Given
         val authUser = createTestUser()
-        whenever(getUser.invoke()).thenReturn(Result.Success(authUser))
-        whenever(getAllUserRepos.invoke(any())).thenReturn(Result.Error(ErrorEntity.Unknown))
+        whenever(getUser.invoke()).thenReturn(
+            Single.just(Result.Success(authUser))
+        )
+        whenever(getAllUserRepos.invoke(any())).thenReturn(
+            Single.just(Result.Error(ErrorEntity.Unknown))
+        )
         viewModel = RepoListViewModel(getUser, getAllUserRepos)
         //When
         viewModel.eventGotUser()
