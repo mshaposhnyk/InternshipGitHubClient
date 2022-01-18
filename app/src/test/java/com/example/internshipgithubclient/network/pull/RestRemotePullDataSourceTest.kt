@@ -1,10 +1,7 @@
 package com.example.internshipgithubclient.network.pull
 
-import com.example.core.domain.Repo
-import com.example.internshipgithubclient.createTestPull
+import com.example.internshipgithubclient.createTestRemotePull
 import com.example.internshipgithubclient.createTestRepo
-import com.example.internshipgithubclient.createTestUser
-import com.example.internshipgithubclient.network.createTestRemotePull
 import com.example.internshipgithubclient.network.repo.RepoApiService
 import com.example.internshipgithubclient.network.toDomain
 import com.nhaarman.mockitokotlin2.any

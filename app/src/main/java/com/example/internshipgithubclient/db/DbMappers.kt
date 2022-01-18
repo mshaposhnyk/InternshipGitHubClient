@@ -72,7 +72,9 @@ fun PullWithAssignees.toDomain(): Pull {
         this.pullRoomEntity.body,
         this.pullRoomEntity.user.toDomain(),
         this.pullRoomEntity.assignee?.toDomain(),
-        this.userRoomEntities.map { it.toDomain() }
+        this.userRoomEntities.map {
+            it.toDomain()
+        }
     )
 }
 

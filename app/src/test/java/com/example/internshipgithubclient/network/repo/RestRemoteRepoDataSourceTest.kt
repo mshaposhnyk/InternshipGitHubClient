@@ -1,10 +1,10 @@
 package com.example.internshipgithubclient.network.repo
 
+import com.example.internshipgithubclient.createTestRemoteRepo
+import com.example.internshipgithubclient.createTestRemoteUser
 import com.example.internshipgithubclient.createTestRepo
 import com.example.internshipgithubclient.createTestUser
-import com.example.internshipgithubclient.network.createTestRemoteRepo
-import com.example.internshipgithubclient.network.createTestRemoteUser
-import com.example.internshipgithubclient.network.toDomain
+import com.example.internshipgithubclient.network.*
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Single
@@ -33,7 +33,8 @@ class RestRemoteRepoDataSourceTest {
             .thenReturn(Single.just(
                 listOf(
                     createTestRemoteUser(0),
-                    createTestRemoteUser(1))
+                    createTestRemoteUser(1)
+                )
                 )
             )
     }

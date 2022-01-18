@@ -1,7 +1,7 @@
 package com.example.internshipgithubclient.network.repo
 
+import com.example.internshipgithubclient.createTestRemoteIssue
 import com.example.internshipgithubclient.createTestRepo
-import com.example.internshipgithubclient.network.createTestRemoteIssue
 import com.example.internshipgithubclient.network.toDomain
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever

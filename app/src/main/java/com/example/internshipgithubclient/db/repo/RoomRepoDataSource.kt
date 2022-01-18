@@ -6,6 +6,7 @@ import com.example.core.domain.User
 import com.example.internshipgithubclient.db.fromDomain
 import com.example.internshipgithubclient.db.toDomain
 import com.example.internshipgithubclient.db.user.UserDao
+import com.example.internshipgithubclient.ui.createDummyUser
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,11 +42,34 @@ class RoomRepoDataSource(private val repoDao: RepoDao, private val userDao: User
         return userDao.getAuthorizedUser()
             .flatMapCompletable {
                 userDao.addUser(user.fromDomain(it.userId == user.id))
-            }.andThen(addRepoWatcher(repo))
+            }
+            .onErrorResumeNext {
+                userDao.addUser(user.fromDomain(false))
+            }
+            .andThen(addRepoWatcher(repo))
     }
 
     override fun addRepo(repo: Repo): Completable {
-        return repoDao.addRepo(repo.fromDomain())
+        return userDao.getUserById(repo.owner.id)
+            .flatMapCompletable {
+                repoDao.addRepo(repo.fromDomain())
+            }
+            .onErrorResumeNext {
+                userDao.getAuthorizedUser()
+                    .onErrorReturnItem(createDummyUser().fromDomain(true))
+                    .map {
+                        it.toDomain()
+                    }
+                    .flatMap {
+                        Single.just(it.id == repo.owner.id)
+                    }
+                    .flatMapCompletable {
+                        userDao.addUser(repo.owner.fromDomain(it))
+                    }
+                    .andThen(
+                        repoDao.addRepo(repo.fromDomain())
+                    )
+            }
     }
 
     override fun addRepoWatcher(repo: Repo): Completable {

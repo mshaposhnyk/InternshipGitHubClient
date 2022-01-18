@@ -13,13 +13,13 @@ import io.reactivex.schedulers.Schedulers
 
 class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
     override fun deleteUser(user: User): Completable {
-        var isCurrentUser = false
-        userDao.getAuthorizedUser().subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe { it ->
-                if (it.userId == user.id) isCurrentUser = true
-            }.dispose()
-        return userDao.deleteUser(user.fromDomain(isCurrentUser))
+        return getAuthorized()
+            .flatMap {
+                Single.just(it.id == user.id)
+            }
+            .flatMapCompletable {
+                userDao.deleteUser(user.fromDomain(it))
+            }
     }
 
     override fun addAuthorized(user: User): Completable {
@@ -48,10 +48,6 @@ class RoomUserDataSource(private val userDao: UserDao) : LocalUserDataSource {
 
     override fun getAuthorized(): Single<User> {
         return userDao.getAuthorizedUser()
-            .doOnError {
-                it
-                val t = 0
-            }
             .onErrorReturnItem(createDummyUser().fromDomain(true))
             .map {
                 it.toDomain()
