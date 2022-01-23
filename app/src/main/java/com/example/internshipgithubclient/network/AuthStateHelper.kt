@@ -17,11 +17,11 @@ import net.openid.appauth.TokenResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "authState")
-val STATE: Preferences.Key<String> = stringPreferencesKey("state")
-
 @Singleton
-class AuthStateHelper @Inject constructor() {
+class AuthStateHelper @Inject constructor(
+    val dataStore:DataStore<Preferences>,
+    val state:Preferences.Key<String>
+) {
     //keeps accessToken, scopes
     var currentAuthState: AuthState = AuthState()
 
@@ -42,8 +42,8 @@ class AuthStateHelper @Inject constructor() {
     suspend fun readState(context: Context){
         val prevCurrentState = currentAuthState.jsonSerializeString()
         val authState : Flow<AuthState> = runBlocking {
-            context.dataStore.data.map { authState ->
-                val authStateSerialized = authState[STATE] ?: prevCurrentState
+            dataStore.data.map { authState ->
+                val authStateSerialized = authState[state] ?: prevCurrentState
                 AuthState.jsonDeserialize(authStateSerialized)
             }
         }
@@ -53,9 +53,9 @@ class AuthStateHelper @Inject constructor() {
     //Writes AuthState object to DataStore
     //Must be async in future
     suspend fun writeState(context: Context){
-        context.dataStore.edit{
+        dataStore.edit{
             authState ->
-            authState[STATE] = currentAuthState.jsonSerializeString()
+            authState[state] = currentAuthState.jsonSerializeString()
         }
     }
 

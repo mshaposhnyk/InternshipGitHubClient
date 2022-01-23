@@ -16,7 +16,8 @@ import javax.inject.Singleton
         NetworkModule::class,
         DbModule::class,
         DaoModule::class,
-        ViewModelFactoryModule::class]
+        ViewModelFactoryModule::class,
+        DataStoreModule::class]
 )
 interface AppComponent : AndroidInjector<InternGitHubApp> {
     @Component.Factory
