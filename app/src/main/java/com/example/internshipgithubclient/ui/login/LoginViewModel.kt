@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import net.openid.appauth.*
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
+open class LoginViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
     private val _eventTokenExchanged = MutableStateFlow<Boolean>(false)
     val eventTokenExchanged: StateFlow<Boolean>
         get() = _eventTokenExchanged
