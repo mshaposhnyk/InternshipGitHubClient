@@ -17,6 +17,7 @@ class UserWorkSpaceActivity : DaggerAppCompatActivity() {
         val navController = this.findNavController(R.id.nav_host_fragment_container)
         setupActionBarWithNavController(navController)
     }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_container)
         return navController.navigateUp() || super.onSupportNavigateUp()

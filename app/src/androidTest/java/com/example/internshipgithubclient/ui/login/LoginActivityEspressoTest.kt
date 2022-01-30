@@ -3,7 +3,6 @@ package com.example.internshipgithubclient.ui.login
 
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import android.view.View
 import android.view.ViewGroup
 
@@ -13,6 +12,7 @@ import androidx.test.espresso.assertion.ViewAssertions.*
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
 
 import com.example.internshipgithubclient.R
 

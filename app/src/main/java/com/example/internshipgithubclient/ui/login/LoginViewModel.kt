@@ -91,6 +91,9 @@ open class LoginViewModel @Inject constructor(application: Application) : Androi
         }
     }
 
-    //Providing intent to start login activity
+    // Providing intent to start login activity
     fun provideAuthIntent(): Intent = _authService.getAuthorizationRequestIntent(_authRequest)
+
+    // Provide AuthResponse from intent
+    fun provideAuthResponse(intent: Intent): AuthorizationResponse? = AuthorizationResponse.fromIntent(intent)
 }

@@ -12,9 +12,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
+@Config(sdk=[28])
 class RoomUserDataSourceTest {
     private lateinit var db: InternGitHubClientDatabase
     private lateinit var roomUserDataSource: RoomUserDataSource
