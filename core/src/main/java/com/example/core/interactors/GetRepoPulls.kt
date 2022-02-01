@@ -1,0 +1,21 @@
+package com.example.core.interactors
+
+import com.example.core.data.NetworkErrorHandler
+import com.example.core.data.PullRepository
+import com.example.core.domain.ErrorHandler
+import com.example.core.domain.Pull
+import com.example.core.domain.Repo
+import com.example.core.domain.Result
+import io.reactivex.Single
+
+class GetRepoPulls(
+    private val pullRepository: PullRepository,
+    private val errorHandler: ErrorHandler = NetworkErrorHandler()
+) {
+    operator fun invoke(repo: Repo): Single<Result<List<Pull>>> {
+        return pullRepository.getRepoPulls(repo)
+            .onErrorReturn{
+                Result.Error(errorHandler.getError(it))
+            }
+    }
+}

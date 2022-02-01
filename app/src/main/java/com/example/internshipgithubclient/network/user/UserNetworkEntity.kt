@@ -1,16 +1,19 @@
 package com.example.internshipgithubclient.network.user
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class UserNetworkEntity (
     @SerializedName("avatar_url")
     val avatarUrl: String,
     @SerializedName("bio")
-    val bio: String,
+    val bio: String?,
     @SerializedName("company")
-    val company: String,
+    val company: String?,
     @SerializedName("email")
-    val email: String,
+    val email: String?,
     @SerializedName("followers")
     val followers: Int,
     @SerializedName("following")
@@ -20,15 +23,15 @@ data class UserNetworkEntity (
     @SerializedName("id")
     val id: Int,
     @SerializedName("location")
-    val location: String,
+    val location: String?,
     @SerializedName("login")
     val login: String,
     @SerializedName("name")
-    val name: String,
+    val name: String?,
     @SerializedName("node_id")
     val nodeId: String,
     @SerializedName("public_gists")
     val publicGists: Int,
     @SerializedName("public_repos")
     val publicRepos: Int
-)
+):Parcelable
