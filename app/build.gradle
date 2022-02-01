@@ -23,7 +23,8 @@ android {
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.1.0"
+        
+        versionName "release 1.1.0"
 
         testInstrumentationRunner "com.example.internshipgithubclient.ui.login.MockRunner"
     }
